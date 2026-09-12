@@ -1,16 +1,15 @@
 /**
  * DER VERGLEICH DES ORGANISATIONSNAMENS ÜBER DIE SYSTEMGRENZE — OHNE DEN NAMEN.
  *
- * Abnahmekriterium E3-20 verlangt, dass der Organisationsname der Instanz mit
- * dem Vertragsnamen im CRM abgeglichen wird. E3-3 verbietet dem
- * Kennzahlen-Endpunkt jeden Inhalt, ausdrücklich auch Namen — das ist der
- * Grund, warum der Zugang im Auftragsverarbeitungsvertrag in EINEM Satz
- * erklärbar ist.
+ * Wer mehrere Instanzen zentral beobachtet, will prüfen können, ob der
+ * Organisationsname einer Instanz dem erwarteten Namen entspricht. Der
+ * Kennzahlen-Endpunkt liefert aber bewusst keinerlei Inhalt, ausdrücklich
+ * auch keine Namen — nur Zählwerte.
  *
- * Beides zugleich geht so: Das CRM schickt einen ABDRUCK des Namens, den es
- * erwartet, und die Instanz antwortet mit `true` oder `false`. Über die
- * Leitung geht damit kein Name — in keine Richtung. Ein Boolean ist kein
- * Inhalt, und der Satz im AV-Vertrag bleibt wahr.
+ * Beides zugleich geht so: Die beobachtende Seite schickt einen ABDRUCK des
+ * Namens, den sie erwartet, und die Instanz antwortet mit `true` oder
+ * `false`. Über die Leitung geht damit kein Name — in keine Richtung. Ein
+ * Boolean ist kein Inhalt.
  *
  * WAS DER ABDRUCK NICHT IST: eine Absicherung gegen Erraten. Wer den Namen
  * einer Organisation kennt, kann seinen Abdruck bilden — der Namensraum ist
@@ -53,8 +52,8 @@ export function normalisiereOrganisationsname(name: string): string {
  * Der Abdruck eines Organisationsnamens als Hex-SHA-256.
  *
  * Bewusst ohne `crypto`-Import, damit dieses Paket in Node UND im Browser
- * benutzbar bleibt: Der Aufrufer reicht die Hash-Funktion herein. In beiden
- * Anwendungen ist das `createHash('sha256')` aus Node.
+ * benutzbar bleibt: Der Aufrufer reicht die Hash-Funktion herein. In der API
+ * ist das `createHash('sha256')` aus Node.
  */
 export function organisationsnameAbdruck(
   name: string,

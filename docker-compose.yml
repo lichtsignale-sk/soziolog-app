@@ -42,10 +42,10 @@ services:
       # Container jetzt nicht mehr -- und hat hier auch nie etwas geschuetzt:
       # Der Container zeigt auf die lokale Entwicklungsdatenbank, und vom Host
       # aus (pnpm --filter @soziolog/api seed) lief der Seed ohnehin durch.
-      # Die Schranke, auf die es ankommt, steht in docker-compose.coolify.yml
-      # und ist unveraendert: NODE_ENV=production, DEMO_MODE nur auf der
-      # Demo-Instanz. Anders als bei control gibt es fuer apps/api KEINE zweite
-      # Schranke -- wer das aendert, aendert es dort, nicht hier.
+      # Die Schranke, auf die es ankommt, steht in der Produktionskonfiguration
+      # (docker-compose.prod.yml): NODE_ENV=production, DEMO_MODE nur auf einer
+      # oeffentlichen Demo-Instanz. Eine zweite Schranke gibt es fuer apps/api
+      # NICHT -- wer das aendert, aendert es dort, nicht hier.
       NODE_ENV: development
       PORT: 3000
       APP_URL: http://localhost:5173

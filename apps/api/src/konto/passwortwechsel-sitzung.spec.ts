@@ -1,7 +1,7 @@
 import { KontoController } from './konto.controller';
 
 /**
- * Regressionstest zum Review-Befund B.2: `aenderePasswort` zaehlt
+ * Regressionstest: `aenderePasswort` zaehlt
  * `sitzungsGeneration` hoch und entwertet damit auch die Sitzung, aus der
  * heraus gerade gehandelt wird. Ohne ein frisches Cookie landet die Person
  * unmittelbar nach der Erfolgsmeldung auf der Anmeldeseite.

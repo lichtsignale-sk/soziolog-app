@@ -1,7 +1,7 @@
 # Release & Updates
 
-Betriebsmodell: **eine Installation je Kunde** (Single-Tenant-Instanzen). Ein
-Update wird zentral gebaut und dann auf jede Kundeninstanz ausgerollt.
+Betriebsmodell: **eine Installation je Organisation** (Single-Tenant-Instanzen).
+Ein Update wird gebaut und dann auf jede Instanz ausgerollt.
 
 ## Versionierung
 
@@ -25,11 +25,11 @@ Update wird zentral gebaut und dann auf jede Kundeninstanz ausgerollt.
 4. Commit: `Release vX.Y.Z`, dann annotiertes Tag:
    `git tag -a vX.Y.Z -m "vX.Y.Z" && git push --follow-tags`.
 
-## Wie ein Update bei den Kunden ankommt
+## Wie ein Update auf einer Instanz ankommt
 
-Pro Kundeninstanz wird das neue Image gebaut und der Stack neu gestartet
-(mit Coolify: „Redeploy" der jeweiligen Instanz, ausgelöst durch den Git-Push
-bzw. das Tag):
+Pro Instanz wird das neue Image gebaut und der Stack neu gestartet (von Hand
+mit `docker compose … up -d --build` oder z. B. über eine Deployment-Plattform,
+ausgelöst durch Git-Push oder Tag):
 
 - **Datenbank:** Der API-Container führt beim Start automatisch
   `prisma migrate deploy` aus (`apps/api/docker-entrypoint.sh`) — neue

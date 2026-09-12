@@ -5,10 +5,10 @@ import type { LucideIcon } from 'lucide-react';
 /**
  * Ein Hinweis in EINER Zeile: Icon, Satz, optional ein Knopf.
  *
- * WOZU SIE DA IST. Das Redesign ersetzt Erklärabsätze durch Struktur — der
- * vierzeilige Kasten über der Rundmailliste wird ein Satz, die drei Absätze
- * „Das ist eine Vorhersage …" werden eine Zeile. Diese Komponente ist der
- * Ort, an dem das passiert. Sie ist bewusst schmal gebaut: Wer mehr als einen
+ * WOZU SIE DA IST. Sie ersetzt Erklärabsätze durch Struktur — ein
+ * vierzeiliger Kasten über einer Liste wird ein Satz, drei erklärende
+ * Absätze werden eine Zeile. Diese Komponente ist der Ort, an dem das
+ * passiert. Sie ist bewusst schmal gebaut: Wer mehr als einen
  * Satz unterbringen will, benutzt das falsche Werkzeug.
  *
  * DIE FARBE IST BEDEUTUNG, KEINE DEKORATION — dieselben vier Familien wie

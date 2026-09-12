@@ -12,7 +12,7 @@ function baue(env: Record<string, string> = {}) {
   return { service, mail };
 }
 
-const EMPF = { ANFRAGE_EMPFAENGER: 'hallo@soziolog.com' };
+const EMPF = { ANFRAGE_EMPFAENGER: 'team@example.org' };
 
 describe('AnfrageService.demo', () => {
   it('schickt Zugangsdaten an die Adresse und benachrichtigt das Team', async () => {
@@ -20,7 +20,7 @@ describe('AnfrageService.demo', () => {
     await service.demo({ email: 'gast@example.org', name: 'Gast' });
     expect(mail.sendeDemoZugang).toHaveBeenCalledWith('gast@example.org');
     expect(mail.sendeInterneAnfrage).toHaveBeenCalledTimes(1);
-    expect(mail.sendeInterneAnfrage.mock.calls[0][0]).toBe('hallo@soziolog.com');
+    expect(mail.sendeInterneAnfrage.mock.calls[0][0]).toBe('team@example.org');
   });
 
   it('verwirft Honeypot-Treffer ohne Versand', async () => {

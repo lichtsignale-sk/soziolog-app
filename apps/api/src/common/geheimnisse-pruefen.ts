@@ -1,10 +1,10 @@
 /**
  * PRÜFT DIE GEHEIMNISSE BEIM START — und bricht ab, statt weiterzulaufen.
  *
- * WARUM ([A.24]): `.env.example` liefert `JWT_SECRET=change-me`,
- * `SESSION_SECRET=change-me` und `CONFIG_KEY=change-me`. Die Coolify-Dateien
- * erzwingen eigene Werte über `${VAR:?…}`, `docker-compose.prod.yml` aber nicht
- * — eine Installation nach `docs/08-deployment.md` startete klaglos mit
+ * WARUM: `.env.example` liefert `JWT_SECRET=change-me`,
+ * `SESSION_SECRET=change-me` und `CONFIG_KEY=change-me`. Eine Compose-Datei
+ * kann eigene Werte über `${VAR:?…}` erzwingen, `docker-compose.prod.yml` tat
+ * es nicht — eine Installation nach `docs/08-deployment.md` startete klaglos mit
  * `change-me` als Signaturschlüssel der Sitzungen. Wer den Vorgabewert kennt,
  * und das ist jeder mit Zugriff auf dieses öffentliche Repository, kann sich
  * damit gültige Sitzungstoken für JEDE Person ausstellen. Das ist kein
@@ -49,7 +49,7 @@ export function pruefeGeheimnisse(
   const maengel: string[] = [];
   for (const name of PFLICHT_GEHEIMNISSE) {
     // CONFIG_KEY faellt in der Anwendung auf SESSION_SECRET zurueck
-    // (konfig.service.ts). Die Pruefung bildet das ab ([Review B2]): Eine
+    // (konfig.service.ts). Die Pruefung bildet das ab: Eine
     // Instanz, die bisher ohne CONFIG_KEY lief, startet weiter — und niemand
     // wird verleitet, einen NEUEN Wert zu setzen, mit dem die gespeicherten
     // SMTP-Zugangsdaten unlesbar wuerden.

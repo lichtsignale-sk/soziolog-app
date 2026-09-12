@@ -10,11 +10,9 @@ import {
  * Der RUMPF der Instanz-Mails — Überschrift, Absätze, Code-Kasten, Knopf.
  *
  * KOPF, KARTE UND FUSSZEILE KOMMEN AUS DEM GEMEINSAMEN MAILRAHMEN
- * (`@soziolog/shared`, `mail-rahmen.ts`), seit dem 12.09.2026: Jede Mail aus
- * SozioLog — Verwaltung wie Instanz — trägt dieselbe Wortmarke im Kopf und
- * dieselbe Anbieterkennung mit Impressum und Datenschutz im Fuss. Vorher
- * hatte die Instanz eine eigene Vorlage mit einem Satz statt der
- * Pflichtangaben.
+ * (`@soziolog/shared`, `mail-rahmen.ts`): Jede Mail der Instanz trägt dieselbe
+ * Wortmarke im Kopf und dieselbe Anbieterkennung mit Impressum und Datenschutz
+ * im Fuss.
  */
 export interface MailVorlageDaten {
   /** Überschrift oben im Rumpf. */

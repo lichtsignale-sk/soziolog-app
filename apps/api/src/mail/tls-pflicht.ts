@@ -16,9 +16,7 @@
  *
  * Die Ausnahme für die Entwicklung hängt bewusst an `NODE_ENV` und nicht an
  * einer Hostnamen-Heuristik: „localhost ist schon in Ordnung" wäre genau die
- * Bequemlichkeit, die diese Prüfung verhindern soll. Dieselbe Bauweise wie in
- * `apps/control/src/mail/tls-pflicht.ts` — die beiden Postausgänge sollen sich
- * nicht unterschiedlich verhalten.
+ * Bequemlichkeit, die diese Prüfung verhindern soll.
  */
 export function pruefeTlsPflicht(
   nodeEnv: string | undefined,

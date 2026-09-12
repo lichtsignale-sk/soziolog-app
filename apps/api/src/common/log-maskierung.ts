@@ -14,7 +14,7 @@
  * Fehlersuche brauchbar bleibt.
  *
  * Das nginx-Zugriffslog erreicht diese Funktion NICHT — dort muss die Maskierung
- * getrennt erfolgen (siehe docs/10-veroeffentlichungs-review.md, A.26).
+ * getrennt in der nginx-Konfiguration erfolgen.
  */
 
 /** Query-Parameter, deren Wert niemals im Log stehen darf. */

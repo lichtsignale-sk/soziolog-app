@@ -2,7 +2,7 @@ import { AuthService } from './auth.service';
 import { heute, zuDatum } from '@soziolog/shared';
 
 /**
- * [W6] `merkeAnmeldung` steht zwischen der Ausstellung des Sitzungstokens und
+ * `merkeAnmeldung` steht zwischen der Ausstellung des Sitzungstokens und
  * dem Setzen des Cookies. Scheitert dieser BETRIEBS-Schreibvorgang, bekäme
  * eine korrekt authentifizierte Person einen 500 und kein Cookie — ausgesperrt,
  * weil eine Kennzahl nicht geschrieben werden konnte.

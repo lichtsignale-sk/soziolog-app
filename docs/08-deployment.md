@@ -39,27 +39,23 @@ Mindestens ändern (jeweils lange Zufallswerte, z. B. `openssl rand -hex 32`):
 SMTP kann per Env (`SMTP_*`) gesetzt **oder** später im Setup-Assistenten
 hinterlegt werden (dann verschlüsselt in der DB, AES-256-GCM mit `CONFIG_KEY`).
 
-### `KENNZAHLEN_TOKEN` — nur bei betreuten Instanzen
+### `KENNZAHLEN_TOKEN` — optional, für zentrale Beobachtung
 
-Betreibt der Anbieter die Instanz (SaaS), bekommt sie ein **je Instanz eigen
-erzeugtes** Geheimnis:
+Nur für Betreiber, die mehrere Instanzen zentral beobachten wollen. Jede
+Instanz bekommt dann ein **je Instanz eigen erzeugtes** Geheimnis:
 
 ```bash
 KENNZAHLEN_TOKEN=$(openssl rand -hex 32)
 ```
 
-Damit schaltet `GET /api/intern/kennzahlen` frei. Über diesen Endpunkt liest
-die Verwaltung (SozioLog Control) täglich **sechs Zählwerte**: aktive
-Personen, Kreise, Tag des letzten Eintrags, Tag der letzten Anmeldung,
-App-Version, Datenbankzustand. **Keine Inhalte** — keine Namen, keine
-Vorschläge, keine Beschlüsse. Genau das macht den Zugang im
-Auftragsverarbeitungsvertrag in einem Satz erklärbar.
+Damit schaltet `GET /api/intern/kennzahlen` frei. Der Endpunkt liefert
+**sechs Zählwerte**: aktive Personen, Kreise, Tag des letzten Eintrags, Tag
+der letzten Anmeldung, App-Version, Datenbankzustand. **Keine Inhalte** —
+keine Namen, keine Vorschläge, keine Beschlüsse.
 
-**Ohne die Variable existiert der Endpunkt nicht (404).** Eine
-On-Premise-Instanz oder eine bestehende Instanz, die nie eine Variable
-bekommt, läuft unverändert weiter und hat auch keinen zusätzlichen offenen
-Weg. Der Endpunkt ist ausschliesslich lesend; die Verwaltung schreibt auf
-einer Kundeninstanz nichts (harte Regel R1).
+**Ohne die Variable existiert der Endpunkt nicht (404).** Eine Instanz, die
+nie eine Variable bekommt, läuft unverändert weiter und hat auch keinen
+zusätzlichen offenen Weg. Der Endpunkt ist ausschliesslich lesend.
 
 Die Erlaubnisliste der Antwortfelder ist in
 `apps/api/src/intern/kennzahlen.spec.ts` festgehalten: Der Test lässt kein
@@ -82,7 +78,7 @@ Certificate-Transparency-Log.
 Mit gesetztem `SETUP_TOKEN` führt der Weg über den Einladungslink:
 
 ```
-https://<subdomain>.soziolog.app/api/setup/start?token=<SETUP_TOKEN>
+https://<deine-domain>/api/setup/start?token=<SETUP_TOKEN>
 ```
 
 `GET /api/setup/start` prüft das Geheimnis zeitkonstant, setzt ein einstündiges
@@ -93,8 +89,8 @@ Geheimnis steht nicht in seinem Formular und nicht in seinem Zustand.
 **Ohne die Variable verhält sich alles wie bisher.** Eine selbst betriebene
 Instanz, bei der niemand ein Geheimnis vergeben kann, lässt sich weiterhin
 direkt einrichten; bereits eingerichtete Instanzen sperrt ohnehin der
-`SetupGesperrtGuard` (410). Vom CRM angelegte Instanzen bekommen die Variable
-immer, und das CRM zeigt dann **keinen** Einladungslink an, wenn kein
+`SetupGesperrtGuard` (410). Wer Instanzen automatisiert anlegt, sollte die
+Variable immer setzen und **keinen** Einladungslink ausgeben, wenn kein
 Geheimnis vorliegt — lieber kein Link als einer, der Schutz behauptet, den er
 nicht hat.
 
@@ -118,7 +114,7 @@ curl -f https://<deine-domain>/api/health   # {"status":"ok",...}
 
 SozioLog ist pro Instanz **einmandantig** (eine Organisation je Datenbank).
 
-### On-Premise (Kunde betreibt selbst)
+### Eine Instanz
 1. Container wie oben starten (leere DB → Migrationen laufen automatisch).
 2. `https://<domain>/` öffnen → es erscheint automatisch der **Setup-Assistent**
    (`/setup`), solange noch keine Organisation existiert.
@@ -127,10 +123,11 @@ SozioLog ist pro Instanz **einmandantig** (eine Organisation je Datenbank).
 4. Nach Abschluss werden Einladungs-E-Mails versendet; der Setup-Endpunkt ist
    danach dauerhaft gesperrt (`410 Gone`).
 
-### SaaS (mehrere Kunden)
-Pro Kunde eine **eigene Instanz** (eigene DB + eigener Stack, z. B. je Kunde ein
-Compose-Projekt mit eigener `.env`/Domäne). So bleiben Daten und Setup-Assistent
-strikt getrennt. Danach identisch zum On-Premise-Ablauf (Schritte 2–4).
+### Mehrere Organisationen betreiben
+Pro Organisation eine **eigene Instanz** (eigene DB + eigener Stack, z. B. je
+Organisation ein Compose-Projekt mit eigener `.env`/Domäne). So bleiben Daten
+und Setup-Assistent strikt getrennt. Danach identisch zum Ablauf für eine
+Instanz (Schritte 2–4).
 
 > Hinweis: Setup + Einladungseinlösung sind durch API-Integrations-/Unit-Tests
 > abgedeckt (org-frische DB); die E2E-Suite (Playwright) prüft die

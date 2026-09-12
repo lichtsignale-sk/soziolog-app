@@ -14,7 +14,7 @@ import { avatarUploadOptionen } from './avatar.storage';
 /**
  * ECHTER UPLOAD GEGEN EINEN LAUFENDEN SERVER — keine Attrappe.
  *
- * WARUM ([A.17]): Die vier hohen Befunde von `pnpm audit` steckten in `multer`,
+ * WARUM: Die vier hohen Befunde von `pnpm audit` steckten in `multer`,
  * das NestJS 10 ueber `@nestjs/platform-express` mitbringt. Statt eines
  * Major-Sprungs des ganzen Frameworks wird der Paketstand in
  * `pnpm-workspace.yaml` auf `^2.2.0` gezwungen. Das ist eine BEHAUPTUNG: dass
@@ -87,7 +87,7 @@ function sendeDatei(
   });
 }
 
-describe('[A.17] multer 2 arbeitet mit NestJS 10 zusammen', () => {
+describe('multer 2 arbeitet mit NestJS 10 zusammen', () => {
   let app: NestExpressApplication;
   let port: number;
 

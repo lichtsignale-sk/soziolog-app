@@ -54,8 +54,7 @@ import { InternModule } from './intern/intern.module';
         }),
         // Cookies und CSRF-Header tragen das Sitzungs-Token. Ohne diese Liste
         // steht in jeder Logzeile ein vollwertiger Anmeldeausweis, mit dem jeder
-        // Log-Leser die Sitzung übernehmen könnte. Gleiche Liste wie in der
-        // Verwaltung (apps/control/src/app.module.ts).
+        // Log-Leser die Sitzung übernehmen könnte.
         redact: [
           'req.headers.cookie',
           'req.headers["x-csrf-token"]',

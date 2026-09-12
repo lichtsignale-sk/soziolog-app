@@ -52,7 +52,7 @@ export class KontoController {
    * vor einem Anmeldebildschirm. Andere Geräte bleiben ausgeschlossen, genau
    * das ist gewollt.
    *
-   * Dasselbe Muster wie in der Verwaltung (zugang.service.setzePasswort): erst
+   * Das Muster: erst
    * entwerten, dann der handelnden Person sofort einen neuen Ausweis geben.
    */
   @Post('passwort')

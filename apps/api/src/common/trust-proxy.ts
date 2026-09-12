@@ -2,8 +2,8 @@
  * Liest und prüft die Anzahl der vertrauenswürdigen Proxy-Sprünge.
  *
  * WARUM DAS NÖTIG IST: Express ermittelt `req.ip` ohne diese Einstellung aus der
- * TCP-Verbindung. In Produktion steht aber immer ein Proxy davor (Traefik →
- * nginx → api), also ist `req.ip` für JEDEN Aufrufer dieselbe interne
+ * TCP-Verbindung. In Produktion steht aber immer ein Proxy davor (äußerer
+ * Reverse-Proxy → nginx → api), also ist `req.ip` für JEDEN Aufrufer dieselbe interne
  * Container-Adresse. Der Throttler von NestJS zählt genau über diesen Wert.
  * Ohne `trust proxy` gilt das globale Limit von 100/min deshalb nicht pro
  * Person, sondern für die gesamte Instanz — und das Login-Limit von 5/min sperrt
@@ -14,9 +14,7 @@
  * sind, lässt den Aufrufer seine eigene Adresse frei wählen und das Limit
  * umgehen.
  *
- * Vorgabe 2 = Traefik + nginx, der Aufbau der Coolify-Deployments
- * (docker-compose.coolify.yml). Gleiche Bedeutung wie CONTROL_TRUST_PROXY in der
- * Verwaltung.
+ * Vorgabe 2 = ein äußerer Reverse-Proxy (TLS) plus nginx im Web-Container.
  */
 export const TRUST_PROXY_VORGABE = 2;
 
@@ -28,8 +26,8 @@ export function vertrauensStufe(roh: string | undefined): number {
   if (!Number.isInteger(zahl) || zahl < 0) {
     throw new Error(
       `TRUST_PROXY muss eine ganze Zahl >= 0 sein, war "${wert}". ` +
-        'Bedeutung: Anzahl der Proxys vor der API. Hinter Coolify (Traefik + ' +
-        'nginx) ist 2 richtig, bei direktem Zugriff ohne Proxy 0.',
+        'Bedeutung: Anzahl der Proxys vor der API. Hinter einem äußeren ' +
+        'Reverse-Proxy plus nginx ist 2 richtig, bei direktem Zugriff ohne Proxy 0.',
     );
   }
   return zahl;

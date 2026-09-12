@@ -57,10 +57,10 @@ describe('AuthService — E-Mail ohne Rücksicht auf Groß/Klein (Datenbank)', (
   });
 
   it('findet „Samuel@…", wenn „samuel@…" gespeichert ist — und schreibt an die gespeicherte', async () => {
-    const adresse = `samuel.${kennung}@lichtsignale.test`;
+    const adresse = `samuel.${kennung}@beispiel.test`;
     const id = await person(adresse, 'samuel');
 
-    await service.passwortVergessen(`  Samuel.${kennung}@LICHTSIGNALE.test `);
+    await service.passwortVergessen(`  Samuel.${kennung}@BEISPIEL.test `);
 
     expect(await resetsVon(id)).toBe(1);
     expect(mail.sendePasswortReset).toHaveBeenCalledWith(adresse, expect.any(String));

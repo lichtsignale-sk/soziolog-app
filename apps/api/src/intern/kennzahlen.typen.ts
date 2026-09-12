@@ -1,7 +1,7 @@
 /**
  * DER DATENVERTRAG DES INTERNEN KENNZAHLEN-ENDPUNKTS.
  *
- * Der Zugang ist im AV-Vertrag in EINEM Satz erklärbar, und dieser Satz lautet:
+ * Der Zugang ist in EINEM Satz erklärbar, und dieser Satz lautet:
  * „Der Betreiber liest je Instanz sechs Zahlen — keine Inhalte." Damit das
  * wahr bleibt und nicht nur behauptet ist, steht hier eine ABSCHLIESSENDE
  * Liste, gegen die `kennzahlen.spec.ts` jede Antwort Feld für Feld prüft:
@@ -22,7 +22,8 @@ export interface KennzahlenAntwort {
   /**
    * `gestoert` heißt: die Anwendung läuft, ihre Datenbank antwortet nicht.
    * Genau dann sind alle Zählwerte `null` — ein „0 aktive Personen" wäre an
-   * dieser Stelle eine Falschaussage und würde im CRM als Abwanderung gelesen.
+   * dieser Stelle eine Falschaussage und würde beim Abfragenden als
+   * Abwanderung gelesen.
    */
   datenbank: DatenbankZustand;
   /** Anzahl aktiver Personen. `null` nur bei `datenbank === 'gestoert'`. */
@@ -36,14 +37,14 @@ export interface KennzahlenAntwort {
   /** Laufende App-Version, z. B. „0.5.2". */
   appVersion: string;
   /**
-   * Stimmt der Organisationsname dieser Instanz mit dem überein, den die
-   * Verwaltung erwartet?
+   * Stimmt der Organisationsname dieser Instanz mit dem überein, den der
+   * Abfragende erwartet?
    *
    * `null`, wenn keine Erwartung mitgeschickt wurde (`?nameAbdruck=` fehlt).
    *
-   * EIN BOOLEAN IST KEIN INHALT — und genau darum geht es. Abnahmekriterium
-   * E3-20 verlangt den Abgleich des Organisationsnamens, E3-3 verbietet jeden
-   * Namen in dieser Antwort. Beides zugleich geht nur so: Die Verwaltung
+   * EIN BOOLEAN IST KEIN INHALT — und genau darum geht es. Gewünscht ist ein
+   * Abgleich des Organisationsnamens, verboten ist jeder Name in dieser
+   * Antwort. Beides zugleich geht nur so: Die abfragende Stelle
    * schickt einen ABDRUCK des Namens, den sie erwartet, und bekommt ja oder
    * nein zurück. Über die Leitung geht in keiner Richtung ein Name.
    */

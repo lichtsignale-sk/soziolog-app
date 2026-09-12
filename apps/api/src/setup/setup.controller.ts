@@ -40,7 +40,7 @@ export class SetupController {
   }
 
   /**
-   * EINSTIEG ÜBER DEN EINLADUNGSLINK ([K4]).
+   * EINSTIEG ÜBER DEN EINLADUNGSLINK.
    *
    * Prüft das Geheimnis aus `?token=`, setzt ein kurzlebiges httpOnly-Cookie
    * und leitet auf den Assistenten weiter. Der Assistent selbst bleibt dadurch
@@ -80,7 +80,7 @@ export class SetupController {
   /**
    * Erst-Setup. Zwei Schranken:
    * - `SetupGesperrtGuard`: nach Abschluss gesperrt (410).
-   * - `SetupTokenGuard`: davor nur über den Einladungslink erreichbar ([K4]).
+   * - `SetupTokenGuard`: davor nur über den Einladungslink erreichbar.
    *   Ohne gesetztes `SETUP_TOKEN` wirkungslos — bestehende und selbst
    *   betriebene Instanzen bleiben unverändert.
    */

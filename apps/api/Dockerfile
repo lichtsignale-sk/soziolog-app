@@ -1,5 +1,5 @@
 # Node 22 (LTS). Node 20 ist seit dem 30.04.2026 End-of-Life und bekommt keine
-# Sicherheitsupdates mehr ([A.18]); pnpm ab 10 verlangt ohnehin Node >= 22.13.
+# Sicherheitsupdates mehr; pnpm ab 10 verlangt ohnehin Node >= 22.13.
 FROM node:22-alpine AS build
 RUN npm install -g pnpm@11.9.0
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN npm install -g pnpm@11.9.0
 # wäre sonst als Prod-Dependency vorhanden, nicht die CLI).
 RUN npm install -g prisma@5.22.0
 WORKDIR /app
-# DAS LOCKFILE GEHOERT DAZU ([A.16]). Ohne es und ohne --frozen-lockfile loeste
+# DAS LOCKFILE GEHOERT DAZU. Ohne es und ohne --frozen-lockfile loeste
 # pnpm die Bereiche aus den package.json frisch auf: Das Laufzeit-Image bekam
 # andere Paketstaende als der gepruefte Build, jeder Rebuild konnte still eine
 # neue Fassung ziehen, und `pnpm audit` sagte nichts ueber das, was wirklich
@@ -35,8 +35,8 @@ COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/api/prisma ./apps/api/prisma
 # Prisma-Client für die Runtime generieren (globale CLI-Version = Client-Version).
 RUN cd apps/api && prisma generate
-# BAUZEITPUNKT INS IMAGE ([Versionsauskunft]). Coolify liefert den Commit als
-# SOURCE_COMMIT, aber keinen Bauzeitpunkt. Diese Schicht liegt hinter dem COPY
+# BAUZEITPUNKT INS IMAGE. Viele Deployment-Plattformen liefern den Commit als
+# Umgebungsvariable, aber keinen Bauzeitpunkt. Diese Schicht liegt hinter dem COPY
 # des gebauten Codes: Sie wird bei jedem echten Bau neu ausgefuehrt und bei
 # einem reinen Cache-Treffer uebersprungen — genau das gewuenschte Verhalten.
 RUN date -u +%Y-%m-%dT%H:%M:%SZ > ./apps/api/BUILD_TIME
@@ -44,7 +44,7 @@ RUN date -u +%Y-%m-%dT%H:%M:%SZ > ./apps/api/BUILD_TIME
 COPY apps/api/docker-entrypoint.sh ./apps/api/docker-entrypoint.sh
 RUN chmod +x ./apps/api/docker-entrypoint.sh
 
-# NICHT ALS ROOT LAUFEN ([A.18]). Das Node-Image bringt den unprivilegierten
+# NICHT ALS ROOT LAUFEN. Das Node-Image bringt den unprivilegierten
 # Benutzer `node` bereits mit. Eine Luecke im Anwendungscode bedeutet sonst root
 # im Container, samt Schreibrecht auf alles Gemountete.
 #

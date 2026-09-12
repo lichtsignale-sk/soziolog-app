@@ -4,9 +4,9 @@ import { MailService } from '../mail/mail.service';
 import type { DemoAnfrageDto, PilotAnfrageDto } from './dto/anfrage.dto';
 
 /**
- * Verarbeitet öffentliche Anfragen von der Website (soziolog.com): Demo-Zugang
- * und Pilotphase. Aktiv nur, wenn `ANFRAGE_EMPFAENGER` gesetzt ist – so bleiben
- * die Endpunkte auf normalen Kunden-/Demo-Instanzen wirkungslos (404).
+ * Verarbeitet öffentliche Anfragen aus einem externen Anfrageformular:
+ * Demo-Zugang und Pilotphase. Aktiv nur, wenn `ANFRAGE_EMPFAENGER` gesetzt ist –
+ * so bleiben die Endpunkte auf normalen Instanzen wirkungslos (404).
  */
 @Injectable()
 export class AnfrageService {

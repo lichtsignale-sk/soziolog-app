@@ -24,7 +24,7 @@ function relTag(offset: number): string {
  */
 async function main() {
   // SCHUTZ: Der Seed LÖSCHT Daten. In Produktion darf er nur auf der Demo-Instanz
-  // laufen (DEMO_MODE=1). Echte Kunden-Instanzen (NODE_ENV=production ohne
+  // laufen (DEMO_MODE=1). Echte Instanzen (NODE_ENV=production ohne
   // DEMO_MODE) werden hart abgewiesen; lokal (kein production) läuft er wie bisher.
   if (process.env.NODE_ENV === 'production' && process.env.DEMO_MODE !== '1') {
     console.error(

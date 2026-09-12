@@ -1,5 +1,5 @@
 /* ============================================================
-   SozioLog Design-Tokens (Redesign)
+   SozioLog Design-Tokens
    Warme, grüne Markenidentität. Vier bedeutungstragende
    Eintragsfarben (docs/03) — Farbe ist NIE alleiniges Signal
    (Label + Icon zusätzlich). Kein Dunkelmodus (bewusst entfernt).
@@ -38,17 +38,17 @@
   --e-beschluss-bg: #e5f3ea;   --e-beschluss-rahmen: #2e8b57;  --e-beschluss-text: #1d6b41;
 
   /* ---------------------------------------------------------------
-     Nachtrag 01.09.2026 — Werte aus dem Designpaket der Verwaltung.
+     Ergänzung für dichte Listen- und Detailansichten.
 
      REIN ADDITIV. Kein Name umbenannt, kein Wert geändert: Die 23
-     Farbwerte oben stehen im Paket byte-identisch, es gab keinen
-     einzigen Konflikt. Was hier dazukommt, sind Rollen, die es im
-     Bestand noch nicht gab — Tertiärtext, die leise Trennlinie, die
-     abgesetzte Fläche, die vier Rahmenfarben der Semantikfamilien.
+     Farbwerte oben bleiben byte-identisch. Was hier dazukommt, sind
+     Rollen, die es im Bestand noch nicht gab — Tertiärtext, die leise
+     Trennlinie, die abgesetzte Fläche, die vier Rahmenfarben der
+     Semantikfamilien.
 
      Warum das wichtig ist: `apps/web` hängt an derselben Datei
      (`apps/web/src/index.css`). Eine Umbenennung dort träfe 47
-     Dateien, ein geänderter Wert die ganze Kundenanwendung. Die
+     Dateien, ein geänderter Wert die ganze Anwendung. Die
      Gegenprobe ist der Content-Hash des web-CSS-Bundles vor und nach
      dieser Änderung — bleibt er gleich, war die Erweiterung additiv.
      --------------------------------------------------------------- */

@@ -5,17 +5,16 @@
  *
  * JEDE Mail aus SozioLog trägt denselben Kopf (die Wortmarke „SozioLog" in
  * Serife) und dieselbe Fusszeile (die Anbieterkennung mit Impressum und
- * Datenschutz) — die der Verwaltung ebenso wie die einer Kundeninstanz
+ * Datenschutz) — gleich, welche Anwendung sie verschickt
  * („Passwort zurücksetzen", Einladung, Anmeldecode, Benachrichtigung …).
  *
- * WARUM HIER (12.09.2026). Bis dahin hatte die Verwaltung einen Rahmen mit
- * Anbieterkennung, die Instanz eine eigene Vorlage mit einem Satz statt der
- * Pflichtangaben. Zwei Fassungen derselben Marke laufen auseinander — genau
- * das war passiert. Jetzt gibt es eine Quelle, und beide Apps rendern daraus.
+ * WARUM HIER. Zwei Fassungen derselben Marke laufen auseinander — eine
+ * Vorlage mit Anbieterkennung und eine mit einem Satz statt der
+ * Pflichtangaben. Deshalb gibt es genau eine Quelle, und jede Anwendung
+ * rendert daraus.
  *
  * WAS HIER NICHT STEHT: der Rumpf. Wie ein Rumpf entsteht, entscheidet jede
- * App selbst — die Verwaltung säubert redaktionelle Texte und trennt die
- * Kanäle (R3), die Instanz setzt Knopf und Code-Kasten. Der Rahmen nimmt den
+ * Anwendung selbst — die Instanz etwa setzt Knopf und Code-Kasten. Der Rahmen nimmt den
  * fertigen Rumpf und legt Kopf und Fusszeile darum. Die Hausangaben setzt er
  * SELBST ein; es gibt keinen Parameter, mit dem ein Aufrufer sie weglassen
  * könnte.
@@ -30,8 +29,7 @@
 /**
  * Die Farbwerte der Marke — abgeschrieben aus `packages/ui/src/tokens.css`.
  * Eine E-Mail lädt kein Stylesheet; die Werte müssen im Quelltext stehen.
- * `apps/control/src/mail/rahmen/rahmen.spec.ts` liest die echte Token-Datei
- * und hält jeden Wert dagegen.
+ * Wer dort einen Wert ändert, ändert ihn hier mit.
  */
 export const MAIL_TOKENS = {
   /** `--farbe-flaeche` — die Karte, auf der die Mail steht. */
@@ -59,8 +57,8 @@ export const MAIL_SERIF = "Georgia, 'Times New Roman', 'Nimbus Roman', serif";
 /**
  * Die Grundschrift. EINFACHE Anführungszeichen um „Segoe UI": Der Wert steht
  * in `style="…"`-Attributen, und doppelte hätten das Attribut vorzeitig
- * beendet — so geschehen in jeder Mail, bis `rahmen-geparst.spec.ts` das
- * geparste Dokument prüfte.
+ * beendet — so geschehen in jeder Mail, bis ein Test das geparste Dokument
+ * prüfte.
  */
 export const MAIL_SCHRIFT =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
@@ -74,9 +72,8 @@ export const MAIL_FARBWERTE: readonly string[] = Object.values(MAIL_TOKENS);
  *
  * ALS KONSTANTE, NICHT AUS DER UMGEBUNG: Eine Pflichtangabe, die bei einer
  * vergessenen Variablen still verschwindet, wäre schlimmer als eine, die man
- * zum Ändern neu ausrollen muss. `apps/control/src/mail/rahmen/
- * haus-fusszeile.spec.ts` hält jede Zeile gegen das Impressum der Webseite
- * und gegen die Rechnungsvorgaben.
+ * zum Ändern neu ausrollen muss. Wer SozioLog unter eigenem Namen betreibt,
+ * trägt hier die eigenen Pflichtangaben ein.
  */
 export const HAUS_ANGABEN: readonly string[] = [
   'Lichtsignale GmbH & Co KG, De-Gasperi-Str. 5, 36039 Fulda',
@@ -165,8 +162,8 @@ export interface MailDokumentTeile {
   /** Der fertige Rumpf als HTML. Für seinen Inhalt steht der Aufrufer ein. */
   rumpfHtml: string;
   /**
-   * Ein Block ÜBER den Hausangaben — nur die werbliche Fusszeile der
-   * Verwaltung (Einwilligung, Abmeldelink). Die Hausangaben stehen immer.
+   * Ein Block ÜBER den Hausangaben — etwa eine werbliche Fusszeile
+   * (Einwilligung, Abmeldelink). Die Hausangaben stehen immer.
    */
   zusatzFusszeileHtml?: string;
 }

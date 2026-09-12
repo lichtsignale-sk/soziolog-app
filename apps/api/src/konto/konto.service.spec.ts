@@ -92,7 +92,7 @@ describe('KontoService.aenderePasswort', () => {
 });
 
 /**
- * Regressionstest zu A.6: Ein Passwortwechsel liess bestehende Sitzungs-JWTs
+ * Regressionstest: Ein Passwortwechsel liess bestehende Sitzungs-JWTs
  * unberuehrt; sie galten weitere sieben Tage.
  */
 describe('KontoService.aenderePasswort — Sitzungen beenden', () => {

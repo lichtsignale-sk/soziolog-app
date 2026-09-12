@@ -3,34 +3,31 @@ import { Throttle } from '@nestjs/throttler';
 import { DemoAnfrageDto, PilotAnfrageDto } from './dto/anfrage.dto';
 
 /**
- * STILLGELEGT — die öffentlichen Anfragen sind in die Verwaltung umgezogen.
+ * STILLGELEGT — öffentliche Anfragen laufen nicht mehr über diese Anwendung.
  *
- * Neuer Weg: `POST /api/oeffentlich/anfrage` in `apps/control`. Dort wird die
- * Anfrage als Organisation im Status `anfrage` GESPEICHERT und zusätzlich per
- * Mail gemeldet; hier wurde sie nur verschickt und war weg, sobald der Versand
- * scheiterte.
+ * Hier wurde eine Anfrage nur per Mail verschickt und war weg, sobald der
+ * Versand scheiterte.
  *
  * Die Endpunkte bleiben bestehen und antworten mit `410 Gone`. Ein alter
  * Browser-Tab oder ein Bot bekommt damit eine eindeutige Auskunft statt eines
  * 404, das nach einem Ausfall aussieht.
  *
- * WAS PROTOKOLLIERT WIRD — und was ausdrücklich NICHT ([W10]):
+ * WAS PROTOKOLLIERT WIRD — und was ausdrücklich NICHT:
  *
  * Eine frühere Fassung schrieb die eingegangene Anfrage VOLLSTÄNDIG ins
  * Fehlerlog, damit nichts verloren geht. Das war der falsche Tausch: Damit
  * lägen Namen, Adressen und Freitexte von Interessenten dauerhaft im Log der
- * KUNDENINSTANZEN — außerhalb jeder Auskunft, jeder Löschung und ohne
+ * INSTANZ — außerhalb jeder Auskunft, jeder Löschung und ohne
  * Aufbewahrungskonzept. Protokolliert werden deshalb nur die ART der Anfrage
  * und ein Zähler.
  *
  * DER PREIS, offen benannt: Wer nach dem Ausrollen noch auf die alte Adresse
  * sendet, dessen Anfrage ist weg. Auffangen soll das die Antwort selbst — sie
  * nennt den Weg, der jetzt gilt, und eine Adresse zum Hinschreiben. Der Zähler
- * sagt der Betriebsführung, ob noch jemand dort landet; solange er steigt, ist
- * der Umzug der Webseite nicht fertig.
+ * sagt der Betriebsführung, ob noch jemand dort landet; solange er steigt,
+ * zeigt irgendwo noch ein Formular hierher.
  *
- * `AnfrageService` bleibt unangetastet im Modul: Er ist die Vorlage, an der
- * sich der neue Weg in `apps/control` orientiert, und wird hier bewusst nicht
+ * `AnfrageService` bleibt unangetastet im Modul und wird hier bewusst nicht
  * gelöscht.
  */
 @Controller('anfrage')
@@ -71,8 +68,8 @@ export class AnfrageController {
     this.logger.error(
       `Anfrage (${art}) an den STILLGELEGTEN Endpunkt eingegangen — die ` +
         `${this.eingegangen[art]}. seit dem Start. Der Inhalt wird bewusst ` +
-        'NICHT protokolliert ([W10]); der Weg läuft jetzt über die ' +
-        'Verwaltung. Steigt dieser Zähler, zeigt noch ein Formular hierher.',
+        'NICHT protokolliert; Anfragen laufen nicht mehr über diese ' +
+        'Anwendung. Steigt dieser Zähler, zeigt noch ein Formular hierher.',
     );
   }
 }

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Tabelle } from './Tabelle';
 
 /**
- * [K1] Unter `table-layout: auto` bestimmt der längste Inhalt die
+ * Unter `table-layout: auto` bestimmt der längste Inhalt die
  * Spaltenbreite. `truncate` auf einem Element INNERHALB der Zelle bleibt dann
  * wirkungslos, und die Tabelle wächst über ihre Hülle hinaus — gemessen bei
  * 768 px mit einem hundert Zeichen langen Vereinsnamen: 1309 px Inhalt in

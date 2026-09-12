@@ -154,7 +154,7 @@ describe('AuthService.passwortZuruecksetzen', () => {
       data: expect.objectContaining({
         passwortHash: 'neuer-hash',
         passwortGeaendertAm: zuDatum(heute()),
-        // Entwertet alle bestehenden Sitzungen (A.6): Wer zuruecksetzt, tut das
+        // Entwertet alle bestehenden Sitzungen: Wer zuruecksetzt, tut das
         // meist, weil jemand Fremdes Zugriff hatte. Die Aufhebung der
         // Anmeldesperre prueft ein eigener Test weiter unten.
         sitzungsGeneration: { increment: 1 },
@@ -204,7 +204,7 @@ describe('AuthService.passwortZuruecksetzen', () => {
 });
 
 /**
- * Regressionstests zu A.25: Bei unbekannter Kennung wurde `argon2.verify` gar
+ * Regressionstests: Bei unbekannter Kennung wurde `argon2.verify` gar
  * nicht aufgerufen. Der Laufzeitunterschied verriet, ob ein Konto existiert.
  */
 describe('AuthService.login — gleich lange Antwort', () => {
@@ -261,7 +261,7 @@ describe('AuthService.login — gleich lange Antwort', () => {
   });
 });
 
-/** Regressionstests zu A.6: Das Sitzungs-JWT muss den Generationsstand tragen. */
+/** Regressionstests: Das Sitzungs-JWT muss den Generationsstand tragen. */
 describe('AuthService.erstelleSitzungsToken', () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -300,7 +300,7 @@ describe('AuthService.erstelleSitzungsToken', () => {
 });
 
 /**
- * Regressionstests zu A.3, zweiter Teil: Es gab nur das IP-Rate-Limit, keinen
+ * Regressionstests: Es gab nur das IP-Rate-Limit, keinen
  * Zaehler am Konto. Passwortraten gegen ein bekanntes Konto war mit wenigen
  * Adressen praktikabel.
  */
@@ -464,7 +464,6 @@ describe('AuthService.login — Anmeldesperre je Konto', () => {
     );
   });
 
-  /** Befund B.5 des Reviews. */
   it('hebt die Sperre beim Passwort-Reset auf', async () => {
     const { service, prisma } = baueService();
     prisma.passwortReset.findFirst.mockResolvedValue({

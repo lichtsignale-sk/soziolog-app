@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
   // Array-Form, weil die Reihenfolge zählt: der Unterpfad muss vor dem
   // Paketnamen stehen, sonst greift die kürzere Regel zuerst.
   build: {
-    // [Review B3] Vite bettet Assets unter 4 KB als data:-URI ein — darunter
+    // Vite bettet Assets unter 4 KB als data:-URI ein — darunter
     // eine kleine Schriftdatei. `font-src 'self'` der CSP blockiert data:.
     assetsInlineLimit: 0,
   },

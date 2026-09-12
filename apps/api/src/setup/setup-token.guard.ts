@@ -15,21 +15,21 @@ export const SETUP_TOKEN_MINDESTLAENGE = 32;
 export const SETUP_COOKIE = 'einrichtung';
 
 /**
- * SCHÜTZT DAS ERST-SETUP, SOLANGE ES NOCH NICHT DURCHGEFÜHRT IST ([K4]).
+ * SCHÜTZT DAS ERST-SETUP, SOLANGE ES NOCH NICHT DURCHGEFÜHRT IST.
  *
  * DAS PROBLEM, DAS ES GAB: `POST /api/setup` war bis zum Abschluss der
  * Einrichtung unauthentifiziert — wer die frische Subdomain zuerst erreicht,
- * wird Admin der Organisation. Solange Instanzen von Hand entstanden, war das
- * ein enges Zeitfenster, das niemand kannte. Mit der automatischen
- * Provisionierung (Etappe 3) wird daraus ein Regelbetrieb: Der Aufbau wartet
- * ausdrücklich auf ein gültiges TLS-Zertifikat, und jedes ausgestellte
+ * wird Admin der Organisation. Solange Instanzen von Hand entstehen, ist das
+ * ein enges Zeitfenster, das niemand kennt. Werden Instanzen automatisiert
+ * aufgebaut, wird daraus ein Regelbetrieb: Der Aufbau wartet
+ * typischerweise auf ein gültiges TLS-Zertifikat, und jedes ausgestellte
  * Zertifikat steht sekundengenau im Certificate-Transparency-Log. Die neue,
  * noch unbeanspruchte Instanz wird also im Moment ihrer Erreichbarkeit
  * öffentlich angekündigt.
  *
- * WIE ES GESCHÜTZT WIRD, OHNE R1 ZU VERLETZEN: Das CRM schreibt beim Anlegen
- * eine Umgebungsvariable `SETUP_TOKEN` — derselbe Weg wie `KENNZAHLEN_TOKEN`,
- * also KEINE Schreiboperation in das Schema der Kundeninstanz. Der
+ * WIE ES GESCHÜTZT WIRD: Wer die Instanz anlegt, setzt eine Umgebungsvariable
+ * `SETUP_TOKEN` — derselbe Weg wie `KENNZAHLEN_TOKEN`, also KEINE
+ * Schreiboperation von außen in die Datenbank der Instanz. Der
  * Einladungslink trägt das Geheimnis; `GET /api/setup/start` prüft es
  * zeitkonstant, setzt ein kurzlebiges httpOnly-Cookie und leitet auf den
  * Assistenten weiter. `POST /api/setup` verlangt danach das Cookie.
@@ -43,7 +43,8 @@ export const SETUP_COOKIE = 'einrichtung';
  * wie bisher. Eine selbst betriebene Instanz (on-premise), bei der niemand ein
  * Geheimnis vergeben kann, lässt sich weiterhin ohne Umweg einrichten — und
  * bereits eingerichtete Instanzen sind ohnehin durch `SetupGesperrtGuard`
- * gesperrt. Vom CRM angelegte Instanzen bekommen die Variable IMMER.
+ * gesperrt. Automatisiert angelegte Instanzen sollten die Variable IMMER
+ * bekommen.
  */
 @Injectable()
 export class SetupTokenGuard implements CanActivate {

@@ -73,8 +73,7 @@ const VOLL = {
 /**
  * WAS DIE ANTWORT ENTHALTEN DARF — abschliessend, Feld für Feld.
  *
- * Der Zugang zu einer Kundeninstanz ist im AV-Vertrag mit einem Satz
- * beschrieben: sechs Zahlen, keine Inhalte. Ein späterer Umbau darf diesen
+ * Der Zugang zu einer Instanz ist mit einem Satz beschrieben: sechs Zahlen, keine Inhalte. Ein späterer Umbau darf diesen
  * Satz nicht stillschweigend falsch machen. Deshalb prüft dieser Test nicht
  * „die erwarteten Felder sind da", sondern die schärfere Aussage: ES GIBT
  * KEINE ANDEREN, und jeder Wert erfüllt eine ENGE Form. Ein durchgereichter
@@ -108,13 +107,13 @@ const ERLAUBT: Record<string, { art: string; pruefe: (w: unknown) => boolean }> 
       pruefe: (w) => w === 'erreichbar' || w === 'gestoert',
     },
     /**
-     * EIN BOOLEAN IST KEIN INHALT — die bewusste Erweiterung der Liste ([W3]).
+     * EIN BOOLEAN IST KEIN INHALT — die bewusste Erweiterung der Liste.
      *
-     * E3-20 verlangt den Abgleich des Organisationsnamens, E3-3 verbietet
-     * jeden Namen in dieser Antwort. Der Ausweg ist ein Vergleich über
-     * ABDRÜCKE: Die Verwaltung schickt den Abdruck des erwarteten Namens, die
-     * Instanz antwortet mit ja, nein oder „nicht gemessen". Über die Leitung
-     * geht in KEINER Richtung ein Name. Der Satz im AV-Vertrag bleibt wahr.
+     * Gewünscht ist ein Abgleich des Organisationsnamens, verboten ist jeder
+     * Name in dieser Antwort. Der Ausweg ist ein Vergleich über ABDRÜCKE: Der
+     * Abfragende schickt den Abdruck des erwarteten Namens, die Instanz
+     * antwortet mit ja, nein oder „nicht gemessen". Über die Leitung geht in
+     * KEINER Richtung ein Name. Der Satz oben bleibt wahr.
      */
     organisationsnameStimmt: {
       art: 'Wahrheitswert oder null',
@@ -223,8 +222,8 @@ describe('Kennzahlen — Werte', () => {
 
     const antwort = await service.erhebe();
 
-    // Fehlerfall: Zählwerte sind null, NICHT 0 — eine 0 läse das CRM als
-    // Abwanderung und löste die Aufgabe „seit 45 Tagen kein Eintrag" aus.
+    // Fehlerfall: Zählwerte sind null, NICHT 0 — eine 0 läse der Abfragende
+    // als Abwanderung und löste die Aufgabe „seit 45 Tagen kein Eintrag" aus.
     expect(antwort.datenbank).toBe('gestoert');
     expect(antwort.aktivePersonen).toBeNull();
     expect(antwort.kreise).toBeNull();
@@ -303,7 +302,7 @@ describe('KennzahlenTokenGuard', () => {
     ).toThrow(UnauthorizedException);
   });
 
-  it('erkennt das Schema unabhängig von der Schreibweise ([H3], RFC 7235)', () => {
+  it('erkennt das Schema unabhängig von der Schreibweise (RFC 7235)', () => {
     const guard = guardMit({ KENNZAHLEN_TOKEN: TOKEN });
     expect(guard.canActivate(anfrageMit(`bearer ${TOKEN}`))).toBe(true);
     expect(guard.canActivate(anfrageMit(`BEARER ${TOKEN}`))).toBe(true);
@@ -326,7 +325,7 @@ describe('KennzahlenTokenGuard', () => {
 });
 
 // ---------------------------------------------------------------------------
-// [W3] E3-20 ohne Namen: der Abgleich über Abdrücke.
+// Namensabgleich ohne Namen: der Abgleich über Abdrücke.
 // ---------------------------------------------------------------------------
 
 const abdruckVon = (name: string): string =>
@@ -334,7 +333,7 @@ const abdruckVon = (name: string): string =>
     createHash('sha256').update(wert, 'utf8').digest('hex'),
   );
 
-describe('Namensabgleich über Abdrücke ([W3], E3-20 mit E3-3)', () => {
+describe('Namensabgleich über Abdrücke (Abgleich ohne Namen in der Antwort)', () => {
   it('meldet `true`, wenn der Name der Instanz dem erwarteten entspricht', async () => {
     const service = new KennzahlenService(prismaDoppel(VOLL) as never);
     const antwort = await service.erhebe(abdruckVon('Musterverein Ostend e. V.'));
@@ -349,10 +348,11 @@ describe('Namensabgleich über Abdrücke ([W3], E3-20 mit E3-3)', () => {
     );
   });
 
-  it('meldet `false` nach einer echten Umfirmierung — der Fall, für den E3-20 da ist', async () => {
+  it('meldet `false` nach einer echten Umfirmierung — der Fall, für den der Abgleich da ist', async () => {
     // DAS IST DER FALL, DEN DIE FRÜHERE FASSUNG NICHT FAND: Der Verein
-    // firmiert IN SEINER INSTANZ um, das CRM führt den alten Vertragsnamen.
-    // Ein Vergleich von Subdomain gegen CRM-Namen sieht davon nichts.
+    // firmiert IN SEINER INSTANZ um, der Abfragende führt den alten Namen.
+    // Ein Vergleich von Subdomain gegen den dort geführten Namen sieht davon
+    // nichts.
     const service = new KennzahlenService(prismaDoppel(VOLL) as never);
     const antwort = await service.erhebe(abdruckVon('Wohnprojekt Grünzug'));
     expect(antwort.organisationsnameStimmt).toBe(false);
@@ -362,7 +362,7 @@ describe('Namensabgleich über Abdrücke ([W3], E3-20 mit E3-3)', () => {
     const ohne = prismaDoppel(VOLL);
     ohne.organisation.findFirst = jest.fn().mockResolvedValue(null);
     const service = new KennzahlenService(ohne as never);
-    // „nicht gemessen" ist etwas anderes als „weicht ab" — die Verwaltung
+    // „nicht gemessen" ist etwas anderes als „weicht ab" — der Abfragende
     // darf daraus keine Abweichung machen.
     expect((await service.erhebe(abdruckVon('egal'))).organisationsnameStimmt).toBeNull();
   });

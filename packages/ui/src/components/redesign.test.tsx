@@ -11,7 +11,7 @@ import { Tabelle } from './Tabelle';
 import { ZeilenLink } from './ZeilenLink';
 
 /**
- * Die Bausteine des Verwaltungs-Redesigns.
+ * Die Bausteine für dichte Listen- und Detailansichten.
  *
  * Geprüft wird nicht, ob sie „richtig aussehen" — das entscheidet der
  * Screenshot-Vergleich. Geprüft wird, was eine Klasse allein nicht hergibt:
@@ -38,13 +38,13 @@ describe('StatusPille — Farbe ist nie das alleinige Signal', () => {
   });
 
   it('trägt einen Zusatz in derselben Pille, nicht in einer zweiten', () => {
-    // „Pilot" mit „läuft" darunter ist EINE Aussage. Zwei Pillen wären zwei.
+    // „Testphase" mit „läuft" darunter ist EINE Aussage. Zwei Pillen wären zwei.
     render(
       <StatusPille art="hinweis" zusatz="läuft">
-        Pilot
+        Testphase
       </StatusPille>,
     );
-    const pille = screen.getByText('Pilot').closest('span');
+    const pille = screen.getByText('Testphase').closest('span');
     expect(within(pille!).getByText('läuft')).toBeInTheDocument();
   });
 });

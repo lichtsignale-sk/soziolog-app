@@ -14,9 +14,8 @@ jest.mock('nodemailer', () => ({
 }));
 
 /**
- * JEDE Mail der Instanz trägt denselben Kopf und dieselbe Fusszeile wie die
- * Mails der Verwaltung (12.09.2026) — gemeinsamer Mailrahmen aus
- * `@soziolog/shared`.
+ * JEDE Mail der Instanz trägt denselben Kopf und dieselbe Fusszeile —
+ * gemeinsamer Mailrahmen aus `@soziolog/shared`.
  *
  * Geprüft wird jede Versandart einzeln: Eine neue Mail, die am Rahmen vorbei
  * gebaut wird, fällt hier auf, sobald sie in die Liste kommt.

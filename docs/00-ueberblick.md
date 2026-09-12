@@ -17,5 +17,5 @@ Backend + DB laufen als EINE Docker-Instanz pro Organisation.
 - docs/           Spezifikation (diese Dateien)
 
 ## Deployment
-Eine Instanz pro Organisation. SaaS = du hostest N Instanzen. On-Premise =
-Kunde startet eine Instanz. Duplizierung über Docker Compose.
+Eine Instanz pro Organisation. Wer mehrere Organisationen betreibt, startet
+mehrere Instanzen nebeneinander. Duplizierung über Docker Compose.

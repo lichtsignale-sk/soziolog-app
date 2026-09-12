@@ -27,13 +27,12 @@ import type { ReactNode } from 'react';
  * `auto` und lässt sich seitlich schieben.
  *
  * Die Breiten sind Tailwinds eingebaute Bruchteil-Klassen (Zwölftel, Viertel,
- * Drittel) — die vorhandene Skala, keine freien Pixelwerte (R7).
+ * Drittel) — die vorhandene Skala, keine freien Pixelwerte.
  *
  * Beispiele stehen hier bewusst NICHT als Klassennamen im Fließtext: Tailwind
  * liest auch Kommentare und nähme sie als benutzte Klassen auf. Sie landeten
  * dann im Stylesheet JEDER Anwendung, die dieses Paket einbindet — auch dort,
- * wo sie niemand verwendet. Aufrufer sehen die Form an den Aufrufen selbst
- * (`apps/control/src/pages/OrganisationenSeite.tsx`).
+ * wo sie niemand verwendet. Die Form zeigen die Tests (`Tabelle.test.tsx`).
  */
 export function Tabelle({
   spalten,
@@ -52,9 +51,9 @@ export function Tabelle({
   spaltenBreiten?: string[];
   /**
    * `standard` ist der Bestand und bleibt die Vorgabe — jede vorhandene
-   * Tabelle in `apps/web` und `apps/control` sieht unverändert aus.
+   * Tabelle in allen Oberflächen, die das Paket nutzen, sieht unverändert aus.
    *
-   * `liste` ist die dichte Datentabelle des Verwaltungs-Redesigns: leiser
+   * `liste` ist die dichte Datentabelle für umfangreiche Listen: leiser
    * Kopf auf abgesetzter Fläche, leisere Zeilentrenner, Tabellenziffern und
    * eine Hover-Fläche je Zeile. Sie ist NICHT die neue Vorgabe, weil eine
    * geänderte Vorgabe 47 Dateien in `apps/web` mitzöge.
@@ -69,7 +68,7 @@ export function Tabelle({
    * am Zeilenende etwa. Ein LEERER Tabellenkopf ist kein zulässiger Ausweg:
    * `axe` meldet ihn als Verstoss, und zu Recht — wer die Tabelle vorlesen
    * lässt, hört an dieser Stelle nichts und weiss nicht, was die Zelle
-   * enthält. Gefunden genau so, beim Prüfen der Organisationsliste.
+   * enthält. Gefunden genau so, beim Prüfen einer solchen Liste mit `axe`.
    */
   spaltenNurVorlesen?: boolean[];
   /**
@@ -77,7 +76,7 @@ export function Tabelle({
    *
    * Ohne sie quetschen sich acht Spalten auf einem schmalen Bildschirm zu
    * Unlesbarkeit zusammen. Mit ihr scrollt die Hülle waagerecht — die Zeile
-   * bleibt lesbar, und die SEITE scrollt trotzdem nicht (E2-25).
+   * bleibt lesbar, und die SEITE scrollt trotzdem nicht.
    *
    * KEIN BEISPIEL ALS KLASSENNAME an dieser Stelle, aus demselben Grund wie
    * im Dateikopf: Tailwind liest auch Kommentare und nähme den Namen als

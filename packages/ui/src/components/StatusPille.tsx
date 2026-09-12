@@ -1,10 +1,10 @@
 /**
  * Der Status als Pille — nie als Satz.
  *
- * DIE REGEL DAHINTER: Gleiche Farbe bedeutet überall dasselbe. `Zahlend`,
- * `Bezahlt` und „Instanz läuft" sind grün, weil alle drei heissen „in
- * Ordnung, nichts zu tun". `Ruhend`, „offene Rechnung" und „Instanz im
- * Aufbau" sind bernstein, weil alle drei heissen „braucht einen Blick".
+ * DIE REGEL DAHINTER: Gleiche Farbe bedeutet überall dasselbe. `Aktiv`,
+ * `Erledigt` und „läuft" sind grün, weil alle drei heissen „in Ordnung,
+ * nichts zu tun". `Ruhend`, „offen" und „im Aufbau" sind bernstein, weil
+ * alle drei heissen „braucht einen Blick".
  * Wer diese Zuordnung an einer Stelle bricht, macht sie überall wertlos.
  *
  * DAS WORT STEHT IMMER DA. Farbe ist nie das alleinige Signal — nicht nur
@@ -12,7 +12,7 @@
  * für Sehende raten heisst. Der Punkt ist Zugabe, nicht Ersatz.
  *
  * `zusatz` ist für den Fall, dass ein Status eine Unterlage hat, die man
- * nicht verlieren will: „Pilot" mit „läuft" darunter. Zwei getrennte Pillen
+ * nicht verlieren will: „Testphase" mit „läuft" darunter. Zwei getrennte Pillen
  * wären zwei Aussagen, wo es eine ist.
  */
 
@@ -44,7 +44,7 @@ export function StatusPille({
   art: StatusArt;
   /** Das Wort. Ohne das Wort keine Pille. */
   children: string;
-  /** Zweite Zeile für eine Unterlage („Pilot" / „läuft"). */
+  /** Zweite Zeile für eine Unterlage („Testphase" / „läuft"). */
   zusatz?: string;
   mitPunkt?: boolean;
   className?: string;

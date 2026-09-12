@@ -4,11 +4,11 @@ import type { LucideIcon } from 'lucide-react';
  * Eine Kennzahl als Kachel — Zahl gross, Bedeutung klein, ein Klick führt
  * zur gefilterten Liste dahinter.
  *
- * WOFÜR SIE GEDACHT IST — und wofür nicht. Sie steht auf dem Rechnungsscreen,
- * wo Zahlen der eigentliche Inhalt sind: offene Beträge, überfällige Beträge,
- * Umsatz des Jahres. Auf der Startseite steht sie NICHT; dort gilt weiter
- * „Aufgabenliste, keine Kacheln" (Abnahmekriterium E2-24). Eine Kennzahl, die
- * niemanden zu einer Handlung führt, ist Dekoration.
+ * WOFÜR SIE GEDACHT IST — und wofür nicht. Sie gehört auf Ansichten, auf
+ * denen Zahlen der eigentliche Inhalt sind: Summen, überfällige Posten,
+ * Jahreswerte. Auf eine Startseite gehört sie NICHT; dort gilt
+ * „Aufgabenliste, keine Kacheln". Eine Kennzahl, die niemanden zu einer
+ * Handlung führt, ist Dekoration.
  *
  * DESHALB IST SIE IMMER KLICKBAR. Wenn eine Zahl es wert ist, gross zu
  * stehen, ist sie es auch wert, dass man dahinterschauen kann. Ohne `onKlick`

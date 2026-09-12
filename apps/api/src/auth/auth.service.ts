@@ -57,8 +57,6 @@ export class AuthService {
    * Fehlermeldung. Damit liess sich abfragen, welche E-Mail-Adressen ein Konto
    * haben (Konto-Aufzählung). Der Vergleich hier schlägt immer fehl; sein
    * Ergebnis wird verworfen, gebraucht wird nur die Dauer.
-   *
-   * Gleiches Vorgehen wie in der Verwaltung (auth/gleichlange-antwort.ts).
    */
   private async gleichlangeAntwort(passwort: string): Promise<void> {
     try {
@@ -242,10 +240,10 @@ export class AuthService {
    * keine Anmeldung.
    *
    * `updateMany` statt `update`: fehlt die Zeile (gelöschte Person, Rennen mit
-   * der Verwaltung), soll das keine erfolgreiche Anmeldung nachträglich
+   * einer gleichzeitigen Löschung), soll das keine erfolgreiche Anmeldung nachträglich
    * scheitern lassen. Der Wert ist eine Betriebskennzahl, kein Nachweis.
    *
-   * UND ER DARF DIE ANMELDUNG NIEMALS SCHEITERN LASSEN ([W6]): Der Aufruf
+   * UND ER DARF DIE ANMELDUNG NIEMALS SCHEITERN LASSEN: Der Aufruf
    * steht zwischen der Ausstellung des Tokens und dem Setzen des Cookies.
    * Wirft er, bekäme eine korrekt authentifizierte Person einen 500 UND kein
    * Cookie — sie wäre ausgesperrt, weil eine Betriebszahl nicht geschrieben

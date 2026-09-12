@@ -5,22 +5,21 @@ import { KennzahlenService } from './kennzahlen.service';
 import type { KennzahlenAntwort } from './kennzahlen.typen';
 
 /**
- * `GET /api/intern/kennzahlen` — der einzige Weg, auf dem die Verwaltung
- * (SozioLog Control) etwas über eine laufende Kundeninstanz erfährt.
+ * `GET /api/intern/kennzahlen` — ein Betreiber mehrerer Instanzen kann damit
+ * zentral abfragen, ob und wie eine laufende Instanz genutzt wird.
  *
- * WARUM ES DAS GIBT — und warum es so schmal ist: Die Verwaltung hat KEINE
- * SQL-Verbindung zu Kundendatenbanken (harte Regel R1). Sie fragt hier
- * täglich sechs Werte ab, mehr existiert auf dieser Route nicht. Genau das
- * macht den Zugang im Auftragsverarbeitungsvertrag in einem Satz erklärbar.
+ * WARUM ES DAS GIBT — und warum es so schmal ist: Eine zentrale Übersicht
+ * braucht KEINE SQL-Verbindung zu den Datenbanken der Instanzen. Sie fragt
+ * hier z. B. täglich sechs Werte ab, mehr existiert auf dieser Route nicht.
+ * Genau das macht den Zugang in einem Satz erklärbar.
  *
  * SCHUTZ: ein PRO INSTANZ erzeugtes Geheimnis (`KENNZAHLEN_TOKEN`),
  * zeitkonstant verglichen. Ohne die Variable existiert die Route nicht (404) —
  * bestehende Instanzen bleiben unverändert.
  *
  * AUSSCHLIESSLICH LESEND. Es gibt hier keinen POST, PATCH oder DELETE, und es
- * soll auch keinen geben: Die Verwaltung schreibt auf einer Kundeninstanz
- * nichts — sie legt sie über die Coolify-API an und stoppt sie über die
- * Coolify-API, und das war die vollständige Aufzählung.
+ * soll auch keinen geben: Über diesen Zugang wird auf einer Instanz nichts
+ * geschrieben.
  */
 @Controller('intern')
 @UseGuards(KennzahlenTokenGuard)
@@ -33,8 +32,8 @@ export class KennzahlenController {
   @Throttle({ default: { limit: 30, ttl: 60_000 } })
   async abrufen(
     /**
-     * Abdruck des Organisationsnamens, den die Verwaltung erwartet — NICHT der
-     * Name (E3-3/E3-20). Optional; ohne ihn bleibt
+     * Abdruck des Organisationsnamens, den der Abfragende erwartet — NICHT der
+     * Name. Optional; ohne ihn bleibt
      * `organisationsnameStimmt` null.
      */
     @Query('nameAbdruck') nameAbdruck?: string,

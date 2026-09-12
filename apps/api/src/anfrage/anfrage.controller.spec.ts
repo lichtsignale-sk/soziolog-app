@@ -26,8 +26,8 @@ describe('AnfrageController (stillgelegt)', () => {
     );
   });
 
-  it('schreibt KEINE personenbezogenen Daten ins Log ([W10])', () => {
-    // Das Log der Kundeninstanzen ist kein Ort für Interessentendaten: keine
+  it('schreibt KEINE personenbezogenen Daten ins Log', () => {
+    // Das Log einer Instanz ist kein Ort für Interessentendaten: keine
     // Auskunft, keine Löschung, kein Aufbewahrungskonzept.
     expect(() =>
       controller.demo({ email: 'gast@example.org', name: 'Gast' }),

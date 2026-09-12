@@ -2,19 +2,19 @@ import { Logger } from '@nestjs/common';
 import { MailService } from './mail.service';
 
 /**
- * Regressionstests zu A.23: Ohne SMTP faellt nodemailer auf jsonTransport
+ * Regressionstests: Ohne SMTP faellt nodemailer auf jsonTransport
  * zurueck. Der bisherige Zweig protokollierte dabei `devHinweis` — bei
  * Passwort-Reset und Einladung also den vollstaendigen Link samt Token. Auf
- * einer Kundeninstanz ohne SMTP stand damit ein Kontouebernahme-Ausweis
+ * einer Produktivinstanz ohne SMTP stand damit ein Kontouebernahme-Ausweis
  * dauerhaft im Container-Log.
  */
 function baueDienst(nodeEnv: string) {
   const config = {
     get: jest.fn((schluessel: string, fallback?: string) => {
       if (schluessel === 'NODE_ENV') return nodeEnv;
-      if (schluessel === 'APP_URL') return 'https://kunde.soziolog.app';
+      if (schluessel === 'APP_URL') return 'https://soziolog.example.org';
       if (schluessel === 'SMTP_HOST') return undefined; // kein Postausgang
-      if (schluessel === 'SMTP_FROM') return 'SozioLog <noreply@soziolog.app>';
+      if (schluessel === 'SMTP_FROM') return 'SozioLog <noreply@example.org>';
       return fallback;
     }),
   };
@@ -22,7 +22,7 @@ function baueDienst(nodeEnv: string) {
   return new MailService(config as never, konfig as never);
 }
 
-const RESET_URL = 'https://kunde.soziolog.app/passwort-zuruecksetzen?token=GEHEIM123';
+const RESET_URL = 'https://soziolog.example.org/passwort-zuruecksetzen?token=GEHEIM123';
 
 describe('Mailversand ohne SMTP', () => {
   let logZeilen: string[];

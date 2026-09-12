@@ -43,7 +43,7 @@ describe('pruefeGeheimnisse', () => {
     );
   });
 
-  /** [Review B2] Die Anwendung faellt bei CONFIG_KEY auf SESSION_SECRET zurueck. */
+  /** Die Anwendung faellt bei CONFIG_KEY auf SESSION_SECRET zurueck. */
   it('laesst ein fehlendes CONFIG_KEY durch, wenn SESSION_SECRET taugt', () => {
     const umgebung: Record<string, unknown> = { ...produktiv };
     delete umgebung['CONFIG_KEY'];

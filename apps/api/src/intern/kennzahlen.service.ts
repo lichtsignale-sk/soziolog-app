@@ -14,7 +14,7 @@ import type { KennzahlenAntwort } from './kennzahlen.typen';
  * (`kennzahlen.spec.ts`) halten das fest, aber die einfachste Absicherung ist,
  * dass hier gar nichts anderes steht.
  *
- * ORGANISATIONSÜBERGREIFEND: Eine Kundeninstanz trägt genau eine Organisation.
+ * ORGANISATIONSÜBERGREIFEND: Eine Instanz trägt genau eine Organisation.
  * Es gibt deshalb keinen `organisationId`-Filter — und damit auch keine
  * Möglichkeit, Zahlen einer bestimmten Organisation gezielt herauszugreifen.
  */
@@ -25,7 +25,7 @@ export class KennzahlenService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * @param nameAbdruck Abdruck des Namens, den die Verwaltung erwartet. Es ist
+   * @param nameAbdruck Abdruck des Namens, den der Abfragende erwartet. Es ist
    *                    ausdrücklich NICHT der Name — siehe `kennzahlen.typen`.
    */
   async erhebe(nameAbdruck?: string): Promise<KennzahlenAntwort> {
@@ -57,8 +57,8 @@ export class KennzahlenService {
       };
     } catch (ausnahme) {
       // NICHT als 500 durchreichen: „App antwortet, Datenbank nicht" ist eine
-      // andere Lage als „Instanz ist weg", und nur diese Antwort kann das CRM
-      // unterscheiden. Der Grund bleibt im Log der Instanz, nicht in der
+      // andere Lage als „Instanz ist weg", und nur diese Antwort kann der
+      // Abfragende unterscheiden. Der Grund bleibt im Log der Instanz, nicht in der
       // Antwort — er enthält je nach Treiber Verbindungszeichenketten.
       const grund = ausnahme instanceof Error ? ausnahme.message : String(ausnahme);
       this.logger.error(`Kennzahlen nicht erhebbar: ${grund}`);
@@ -79,7 +79,7 @@ export class KennzahlenService {
    *
    * Gibt `null`, wenn keine Erwartung mitkam oder keine Organisation existiert
    * (frische Instanz vor der Einrichtung). `null` heisst „nicht gemessen" und
-   * ist etwas anderes als `false` — die Verwaltung darf daraus keine
+   * ist etwas anderes als `false` — der Abfragende darf daraus keine
    * Abweichung machen.
    *
    * Der Name verlässt die Instanz dabei NICHT: Verglichen werden Abdrücke.

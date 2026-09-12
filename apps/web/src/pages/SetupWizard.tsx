@@ -68,7 +68,7 @@ const FELDER: Record<string, Path<Formular>[]> = {
 /**
  * Lädt den Setup-Status und entscheidet, ob der SMTP-Schritt gebraucht wird.
  * Hat der Server bereits ein SMTP-Relay per Env (SMTP_*), entfällt der Schritt –
- * die Instanz verschickt dann über dieses zentrale Relay (Betriebsmodell A).
+ * die Instanz verschickt dann über dieses vom Betrieb vorgegebene Relay.
  */
 export function SetupWizard() {
   const [smtpVorhanden, setSmtpVorhanden] = useState<boolean | null>(null);

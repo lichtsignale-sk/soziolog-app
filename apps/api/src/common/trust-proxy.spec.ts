@@ -1,7 +1,7 @@
 import { vertrauensStufe, TRUST_PROXY_VORGABE } from './trust-proxy';
 
 describe('vertrauensStufe', () => {
-  it('nimmt ohne Angabe die Vorgabe für den Coolify-Aufbau', () => {
+  it('nimmt ohne Angabe die Vorgabe (Reverse-Proxy plus nginx)', () => {
     expect(vertrauensStufe(undefined)).toBe(TRUST_PROXY_VORGABE);
     expect(vertrauensStufe('')).toBe(TRUST_PROXY_VORGABE);
     expect(vertrauensStufe('   ')).toBe(TRUST_PROXY_VORGABE);

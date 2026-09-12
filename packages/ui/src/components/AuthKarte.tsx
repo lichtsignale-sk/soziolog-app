@@ -9,18 +9,18 @@ export function AuthKarte({
 }: {
   titel: string;
   /**
-   * Kleine Zeile unter dem Titel, die das SYSTEM benennt — etwa „Verwaltung".
+   * Kleine Zeile unter dem Titel, die das SYSTEM benennt.
    *
-   * Sie schliesst eine Lücke, die im Betrieb auffiel: Anmeldeseite und
-   * Kundenanwendung trugen beide nur „SozioLog", und wer den Link aus einem
-   * Lesezeichen öffnete, sah nicht, wo er gerade ist. In der angemeldeten
-   * Ansicht steht die Angabe längst (AppShell, Seitenleiste) — nur davor
-   * fehlte sie, also genau dort, wo die Frage überhaupt aufkommt.
+   * Für Oberflächen, die das Paket nutzen und neben einer anderen stehen,
+   * deren Anmeldeseite ebenfalls nur „SozioLog" trägt: Wer den Link aus
+   * einem Lesezeichen öffnet, soll sehen, wo er gerade ist. In der
+   * angemeldeten Ansicht steht die Angabe in der Seitenleiste — davor fehlte
+   * sie, also genau dort, wo die Frage überhaupt aufkommt.
    *
-   * Optional, weil die Kundenanwendung sie nicht braucht: Dort gibt es kein
-   * zweites System, mit dem sich die Seite verwechseln liesse.
+   * Optional, weil eine einzelne Oberfläche sie nicht braucht: Dort gibt es
+   * kein zweites System, mit dem sich die Seite verwechseln liesse.
    *
-   * Schriftbild bewusst identisch mit der Seitenleiste der Verwaltung.
+   * Schriftbild bewusst identisch mit einer Beschriftung in der Seitenleiste.
    */
   marke?: string;
   untertitel?: string;

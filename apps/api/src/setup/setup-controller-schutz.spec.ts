@@ -17,7 +17,7 @@ describe('Schutz der Setup-Routen', () => {
   });
 
   /**
-   * Regressionstest zu A.5 und zum Review-Befund B.4: Die Route
+   * Regressionstest: Die Route
    * `POST /api/setup/einladung-erneut/:personId` stand ohne jeden Guard offen.
    * Ein Guard allein hätte nicht genügt — `SetupTokenGuard` lässt auf Instanzen
    * OHNE gesetztes SETUP_TOKEN jeden durch. Die Route hatte im Frontend keinen

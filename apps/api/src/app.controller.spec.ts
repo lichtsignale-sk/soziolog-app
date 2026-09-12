@@ -26,8 +26,8 @@ describe('AppController', () => {
 });
 
 /**
- * Der Bauzeitpunkt kam im Betrieb nie an: Coolify liefert den Commit, aber
- * keinen Bauzeitpunkt, und ein LEER gesetztes APP_BUILD_TIME ist nicht
+ * Der Bauzeitpunkt kam im Betrieb nie an: Die Deployment-Plattform lieferte den
+ * Commit, aber keinen Bauzeitpunkt, und ein LEER gesetztes APP_BUILD_TIME ist nicht
  * `undefined` — `?? null` liess deshalb den leeren String durch und
  * /api/version zeigte "". Jetzt entscheidet `||`, und das Image bringt einen
  * Rueckfall mit.

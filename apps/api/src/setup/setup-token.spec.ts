@@ -26,7 +26,7 @@ function anfrageMit(
 }
 
 /**
- * [K4] Das Erst-Setup war bis zu seinem Abschluss unauthentifiziert. Wer die
+ * Das Erst-Setup war bis zu seinem Abschluss unauthentifiziert. Wer die
  * frische Subdomain zuerst erreichte, wurde Admin der Organisation — und die
  * Instanz kündigt ihre Erreichbarkeit über das Certificate-Transparency-Log
  * sekundengenau öffentlich an.
@@ -172,8 +172,7 @@ describe('Die Schranke hängt wirklich an der Route', () => {
    *
    * Geprüft an den Metadaten und nicht an einer Erinnerung: Wer den Decorator
    * beim nächsten Umbau verliert, bekommt einen roten Test statt einer offenen
-   * Route — dieselbe Disziplin wie `controller-schutz.spec.ts` in der
-   * Verwaltung.
+   * Route.
    */
   function guardsVon(methode: string): unknown[] {
     const prototyp = SetupController.prototype as unknown as Record<string, object>;

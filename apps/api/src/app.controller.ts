@@ -6,7 +6,7 @@ import { APP_VERSION } from './version';
 /**
  * Bauzeitpunkt aus der Datei, die das Image mitbringt.
  *
- * Coolify setzt den Commit (SOURCE_COMMIT), aber keinen Bauzeitpunkt — ohne
+ * Viele Deployment-Plattformen setzen den Commit, aber keinen Bauzeitpunkt — ohne
  * diesen Rueckfall bliebe `gebautAm` in jedem Deployment leer, und im
  * Stoerungsfall fehlte die Auskunft, welcher Stand laeuft. Die Datei entsteht
  * im Dockerfile hinter dem COPY des gebauten Codes.

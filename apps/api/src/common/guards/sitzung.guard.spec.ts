@@ -32,7 +32,7 @@ function baue(nutzlast: Record<string, unknown> | null) {
 }
 
 /**
- * Regressionstests zu A.6: Vor der Einführung von `sitzungsGeneration` blieb
+ * Regressionstests: Vor der Einführung von `sitzungsGeneration` blieb
  * ein Sitzungs-JWT nach Passwortwechsel und Reset sieben Tage gültig.
  */
 describe('SitzungGuard — Entwertung über sitzungsGeneration', () => {

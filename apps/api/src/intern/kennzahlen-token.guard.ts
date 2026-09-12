@@ -20,7 +20,7 @@ export const KENNZAHLEN_TOKEN_MINDESTLAENGE = 32;
  *
  * 1. OHNE GEHEIMNIS EXISTIERT DER ENDPUNKT NICHT (404). Genau das Verhalten,
  *    das `AnfrageService` mit `ANFRAGE_EMPFAENGER` schon hat: Eine bestehende
- *    Kundeninstanz, die nie eine Variable bekommt, läuft unverändert weiter
+ *    Instanz, die nie eine Variable bekommt, läuft unverändert weiter
  *    und hat auch keinen zusätzlichen offenen Weg. 404 statt 401, damit die
  *    Antwort nicht verrät, dass es hier überhaupt etwas gäbe.
  * 2. DER VERGLEICH IST ZEITKONSTANT. Verglichen werden die SHA-256-Abdrücke,
@@ -53,10 +53,11 @@ export class KennzahlenTokenGuard implements CanActivate {
 /**
  * Liest das Geheimnis aus `Authorization: Bearer …`. Sonst `null`.
  *
- * Das Schema wird OHNE Rücksicht auf Gross- und Kleinschreibung erkannt ([H3]):
+ * Das Schema wird OHNE Rücksicht auf Gross- und Kleinschreibung erkannt:
  * RFC 7235 verlangt das ausdrücklich, und mancher HTTP-Client schreibt
- * `bearer`. Ein Abruf, der daran scheitert, sähe im CRM aus wie „Instanz weist
- * uns ab" — ein Fehler, den niemand an dieser Stelle suchen würde.
+ * `bearer`. Ein Abruf, der daran scheitert, sähe beim Abfragenden aus wie
+ * „Instanz weist uns ab" — ein Fehler, den niemand an dieser Stelle suchen
+ * würde.
  *
  * Das GEHEIMNIS selbst bleibt selbstverständlich buchstabengetreu.
  */

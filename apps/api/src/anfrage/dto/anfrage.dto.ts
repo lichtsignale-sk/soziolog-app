@@ -26,7 +26,7 @@ export class DemoAnfrageDto {
   webseite?: string;
 }
 
-/** Pilotphase anfragen: Interessens-Anfrage an das Team (hallo@…). */
+/** Pilotphase anfragen: Interessens-Anfrage an das Team (`ANFRAGE_EMPFAENGER`). */
 export class PilotAnfrageDto {
   @IsString()
   @IsNotEmpty({ message: 'Organisation ist erforderlich.' })

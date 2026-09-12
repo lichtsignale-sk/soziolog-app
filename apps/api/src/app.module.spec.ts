@@ -1,14 +1,14 @@
 import { Test } from '@nestjs/testing';
 
 /**
- * DIE UNTERGRENZE, HIER EBENSO ([K6]).
+ * DIE UNTERGRENZE.
  *
- * In der Verwaltung ging Etappe 3 mit 564 grünen Tests aus der Hand — und die
- * Anwendung startete nicht, weil kein Test das `AppModule` compilierte. Die
- * Lehre gilt nicht nur dort: Diese Etappe hat auch in `apps/api` an der
- * Verdrahtung gearbeitet (`InternModule`, `SetupTokenGuard`, `ConfigService`
- * im `SetupController`). Ein Verdrahtungsfehler zeigt sich erst beim
- * Hochfahren, und Unit-Tests, die ihre Dienste mit `new` bauen, sehen ihn nie.
+ * Eine Anwendung kann mit Hunderten grüner Tests aus der Hand gehen und
+ * trotzdem nicht starten, wenn kein Test das `AppModule` compiliert. Gerade
+ * die Verdrahtung (`InternModule`, `SetupTokenGuard`, `ConfigService` im
+ * `SetupController`) ist dafür anfällig: Ein Verdrahtungsfehler zeigt sich erst
+ * beim Hochfahren, und Unit-Tests, die ihre Dienste mit `new` bauen, sehen ihn
+ * nie.
  *
  * Der Test stellt keine Datenbankverbindung her: `compile()` ruft keine
  * Lebenszyklus-Haken.
@@ -64,8 +64,7 @@ describe('AppModule lässt sich zusammensetzen', () => {
 
     expect(modul.get(KennzahlenService)).toBeDefined();
     expect(modul.get(SetupTokenGuard)).toBeDefined();
-    // Der Controller bekam in dieser Etappe eine zweite Abhängigkeit
-    // (ConfigService) — genau die Art Änderung, die beim Hochfahren scheitert.
+    // Der Controller hat eine zweite Abhängigkeit (ConfigService) — genau die Art Änderung, die beim Hochfahren scheitert.
     expect(modul.get(SetupController)).toBeDefined();
     await modul.close();
   });

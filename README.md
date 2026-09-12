@@ -13,8 +13,9 @@ hallo@soziolog.com
 
 ## Voraussetzungen
 
-- Node.js ≥ 20
-- pnpm ≥ 9
+- Node.js ≥ 22.13
+- pnpm (die Version aus `packageManager` in `package.json`, z. B. über
+  `corepack enable`)
 - Docker + Docker Compose
 
 ## Lokale Entwicklung (Host)
@@ -82,7 +83,8 @@ pnpm e2e
 |---|---|
 | `pnpm dev` | API + Web im Watch-Modus starten |
 | `pnpm build` | Alle Pakete bauen |
-| `pnpm test` | Alle Unit-/Integrationstests ausführen |
+| `pnpm test` | Alle Unit-Tests ausführen |
+| `pnpm --filter @soziolog/api test:integration` | Integrationstests der API (Docker-DB nötig) |
 | `pnpm lint` | TypeScript-Typen prüfen |
 | `pnpm e2e` | Playwright-E2E-Tests (Docker-DB nötig) |
 

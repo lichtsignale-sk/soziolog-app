@@ -1,5 +1,5 @@
 /**
- * Die Filterleiste über einer Liste — `Alle 94 · Anfrage 12 · Pilot 6 …`.
+ * Die Filterleiste über einer Liste — `Alle 94 · Offen 12 · Erledigt 6 …`.
  *
  * SIE FILTERT, SIE NAVIGIERT NICHT. Das unterscheidet sie von `Reiter`:
  * Reiter wechseln den Inhalt eines Bereichs, Chips schränken dieselbe Liste
