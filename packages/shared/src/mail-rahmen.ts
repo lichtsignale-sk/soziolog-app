@@ -4,8 +4,8 @@
  * ===========================================================================
  *
  * JEDE Mail aus SozioLog trägt denselben Kopf (die Wortmarke „SozioLog" in
- * Serife) und dieselbe Fusszeile (die Anbieterkennung mit Impressum und
- * Datenschutz) — gleich, welche Anwendung sie verschickt
+ * Serife) und dieselbe Fusszeile (die Anbieterkennung mit Impressum,
+ * Datenschutz und AGB) — gleich, welche Anwendung sie verschickt
  * („Passwort zurücksetzen", Einladung, Anmeldecode, Benachrichtigung …).
  *
  * WARUM HIER. Zwei Fassungen derselben Marke laufen auseinander — eine
@@ -85,7 +85,8 @@ export const HAUS_ANGABEN: readonly string[] = [
 ];
 
 /**
- * Die Verweise der Fusszeile. GENAU DREI, alle ohne Parameter — eine
+ * Die Verweise der Fusszeile. GENAU VIER (Startseite, Impressum,
+ * Datenschutz, AGB), alle ohne Parameter — eine
  * Anbieterkennung ist keine Messstelle. Absolut, weil es in einer Mail keine
  * relative Auflösung gibt.
  */
@@ -94,6 +95,7 @@ export const HAUS_LINKS: readonly { text: string; url: string }[] = [
   { text: 'soziolog.com', url: HAUS_URL },
   { text: 'Impressum', url: `${HAUS_URL}/impressum` },
   { text: 'Datenschutz', url: `${HAUS_URL}/datenschutz` },
+  { text: 'AGB', url: `${HAUS_URL}/agb` },
 ];
 
 /** Escaped Text für die Einbettung in HTML (Inhalt wie Attribut). */

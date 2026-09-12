@@ -21,7 +21,7 @@ describe('Der gemeinsame Mailrahmen', () => {
     expect(html.indexOf('>SozioLog</p>')).toBeLessThan(html.indexOf('<p>Rumpf</p>'));
   });
 
-  it('setzt die Anbieterkennung immer ein — jede Zeile und alle drei Verweise', () => {
+  it('setzt die Anbieterkennung immer ein — jede Zeile und alle Verweise', () => {
     const html = mailDokument(TEILE);
     for (const zeile of HAUS_ANGABEN) expect(html).toContain(escapeMailText(zeile));
     for (const l of HAUS_LINKS) expect(html).toContain(`href="${l.url}"`);
