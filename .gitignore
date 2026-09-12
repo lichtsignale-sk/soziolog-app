@@ -1,0 +1,19 @@
+node_modules/
+dist/
+dist-web/
+# Umgebungsdateien auf jeder Ebene, inkl. Sicherungen wie .env.bak.
+.env
+.env.*
+!.env.example
+coverage/
+apps/api/uploads/
+*.tsbuildinfo
+.DS_Store
+.idea/
+.vscode/
+backups/*.sql*
+
+# Playwright
+apps/web/e2e/.auth/
+apps/web/playwright-report/
+apps/web/test-results/

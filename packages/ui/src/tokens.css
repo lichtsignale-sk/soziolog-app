@@ -1,0 +1,180 @@
+/* ============================================================
+   SozioLog Design-Tokens (Redesign)
+   Warme, grüne Markenidentität. Vier bedeutungstragende
+   Eintragsfarben (docs/03) — Farbe ist NIE alleiniges Signal
+   (Label + Icon zusätzlich). Kein Dunkelmodus (bewusst entfernt).
+   Zwei Schriftfamilien: Sans (UI) + Serif (Überschriften/Fließtext).
+
+   Einzige Quelle der Wahrheit für alle Apps. Wird per
+   `@import "@soziolog/ui/tokens.css";` nach `@import "tailwindcss";`
+   eingebunden. Werte werden hier gepflegt, nirgends sonst.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Neutrale, warme Flächen + grüne Primärfarbe (Marke). */
+  --farbe-flaeche: #ffffff;      /* Karten, Sidebar, Modals (surf) */
+  --farbe-flaeche-2: #f6f7f5;    /* App-Hintergrund (bg) */
+  --farbe-flaeche-3: #eef1ec;    /* Chips, Hover-Flächen, Segmented-Container */
+  --farbe-text: #1e2621;         /* Primärtext (ink) */
+  --farbe-text-leise: #54605a;   /* Sekundärtext (ink2) */
+  --farbe-read: #2a332d;         /* Fließtext in Serifenschrift (Vorschlags-/Zieltexte) */
+  --farbe-rahmen: #e3e7e1;       /* Standard-Rahmen (line) */
+  --farbe-primaer: #3a7d6b;      /* Marke: Buttons, aktive Nav, Fokus */
+  --farbe-primaer-hover: #2f6a5a;
+  --farbe-primaer-text: #ffffff;
+  --farbe-primaer-soft: #e6f0ec;     /* grüne Soft-Fläche (Chips, aktive Icons) */
+  --farbe-primaer-softtext: #2c6152; /* Text/Icon auf grüner Soft-Fläche */
+  --farbe-fokus: #3a7d6b;
+  --farbe-gefahr: #c0453f;       /* destruktiv = Einwand-Rot */
+  --farbe-gefahr-text: #ffffff;
+
+  /* Eintragsfarben: Vorschlag=blau, Bedenken=amber, Einwand=rot (vereinheitlicht),
+     Beschluss=grün. Je Rolle bg / rahmen(=Akzent) / text (AA-Kontrast). */
+  --e-vorschlag-bg: #eaf1fa;   --e-vorschlag-rahmen: #2e6bb0;  --e-vorschlag-text: #1f4e86;
+  --e-bedenken-bg: #fbf3dc;    --e-bedenken-rahmen: #c58a16;   --e-bedenken-text: #835905;
+  --e-einwand-bg: #fbeae8;     --e-einwand-rahmen: #c0453f;    --e-einwand-text: #8c2c28;
+  --e-beschluss-bg: #e5f3ea;   --e-beschluss-rahmen: #2e8b57;  --e-beschluss-text: #1d6b41;
+
+  /* ---------------------------------------------------------------
+     Nachtrag 01.09.2026 — Werte aus dem Designpaket der Verwaltung.
+
+     REIN ADDITIV. Kein Name umbenannt, kein Wert geändert: Die 23
+     Farbwerte oben stehen im Paket byte-identisch, es gab keinen
+     einzigen Konflikt. Was hier dazukommt, sind Rollen, die es im
+     Bestand noch nicht gab — Tertiärtext, die leise Trennlinie, die
+     abgesetzte Fläche, die vier Rahmenfarben der Semantikfamilien.
+
+     Warum das wichtig ist: `apps/web` hängt an derselben Datei
+     (`apps/web/src/index.css`). Eine Umbenennung dort träfe 47
+     Dateien, ein geänderter Wert die ganze Kundenanwendung. Die
+     Gegenprobe ist der Content-Hash des web-CSS-Bundles vor und nach
+     dieser Änderung — bleibt er gleich, war die Erweiterung additiv.
+     --------------------------------------------------------------- */
+
+  --farbe-text-still: #8a938b;   /* Tertiärtext (ink3): Platzhalter, „—", Eyebrow */
+  --farbe-rahmen-leise: #edf0ec; /* Trennlinie INNERHALB von Karten (line2) */
+  --farbe-flaeche-4: #fbfcfb;    /* abgesetzte Fläche (surf2): Tabellenkopf, Feldflächen */
+  --farbe-primaer-softer: #f1f6f3; /* sehr helle grüne Fläche: Nav-Hover, Hinweisstreifen */
+  --farbe-primaer-softrahmen: #c9e0d6; /* Rahmen auf grüner Soft-Fläche */
+  --farbe-primaer-softtext-hover: #1e4a3e; /* Hover eines Textlinks in Tabellenzeilen */
+
+  /* Rahmenfarben der vier Semantikfamilien. Die Familien selbst haben
+     schon bg/akzent/text; für Hinweisstreifen und Karten fehlte der
+     HELLE Rahmen — der Akzent wäre dort zu kräftig. */
+  --e-vorschlag-rahmen-hell: #cfdff1;
+  --e-bedenken-rahmen-hell: #f0e2b0;
+  --e-einwand-rahmen-hell: #f1ccc9;
+  --e-beschluss-rahmen-hell: #c4e5cf;
+
+  /* Zustände, die keiner Semantikfamilie angehören. */
+  --farbe-eingeladen: #d8b23e;       /* Punkt „Eingeladen" */
+  --farbe-eingeladen-text: #9a7b1e;
+  --farbe-inaktiv: #cdd4cd;          /* Punkt „Gesperrt", Schalter aus */
+  --farbe-knopf-gesperrt: #b9c4bd;   /* gesperrter Primärknopf */
+
+  --schatten-karte: 0 4px 14px rgb(20 40 30 / 0.07);
+  --schatten-karte-hover: 0 6px 20px rgb(20 40 30 / 0.09);
+  --schatten-dialog: 0 24px 60px rgb(20 40 30 / 0.30);
+  --schatten-popover: 0 18px 44px rgb(20 40 30 / 0.20);
+  --schatten-toast: 0 12px 34px rgb(20 40 30 / 0.28);
+}
+
+/* Tokens für Tailwind-Utilities verfügbar machen. */
+@theme inline {
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+
+  --color-flaeche: var(--farbe-flaeche);
+  --color-flaeche-2: var(--farbe-flaeche-2);
+  --color-flaeche-3: var(--farbe-flaeche-3);
+  --color-text: var(--farbe-text);
+  --color-leise: var(--farbe-text-leise);
+  --color-read: var(--farbe-read);
+  --color-rahmen: var(--farbe-rahmen);
+  --color-primaer: var(--farbe-primaer);
+  --color-primaer-hover: var(--farbe-primaer-hover);
+  --color-primaer-text: var(--farbe-primaer-text);
+  --color-primaer-soft: var(--farbe-primaer-soft);
+  --color-primaer-softtext: var(--farbe-primaer-softtext);
+  --color-fokus: var(--farbe-fokus);
+  --color-gefahr: var(--farbe-gefahr);
+  --color-gefahr-text: var(--farbe-gefahr-text);
+
+  --color-vorschlag-bg: var(--e-vorschlag-bg);
+  --color-vorschlag-rahmen: var(--e-vorschlag-rahmen);
+  --color-vorschlag-text: var(--e-vorschlag-text);
+  --color-bedenken-bg: var(--e-bedenken-bg);
+  --color-bedenken-rahmen: var(--e-bedenken-rahmen);
+  --color-bedenken-text: var(--e-bedenken-text);
+  --color-einwand-bg: var(--e-einwand-bg);
+  --color-einwand-rahmen: var(--e-einwand-rahmen);
+  --color-einwand-text: var(--e-einwand-text);
+  --color-beschluss-bg: var(--e-beschluss-bg);
+  --color-beschluss-rahmen: var(--e-beschluss-rahmen);
+  --color-beschluss-text: var(--e-beschluss-text);
+
+  --color-still: var(--farbe-text-still);
+  --color-rahmen-leise: var(--farbe-rahmen-leise);
+  --color-flaeche-4: var(--farbe-flaeche-4);
+  --color-primaer-softer: var(--farbe-primaer-softer);
+  --color-primaer-softrahmen: var(--farbe-primaer-softrahmen);
+  --color-primaer-softtext-hover: var(--farbe-primaer-softtext-hover);
+
+  --color-vorschlag-rahmen-hell: var(--e-vorschlag-rahmen-hell);
+  --color-bedenken-rahmen-hell: var(--e-bedenken-rahmen-hell);
+  --color-einwand-rahmen-hell: var(--e-einwand-rahmen-hell);
+  --color-beschluss-rahmen-hell: var(--e-beschluss-rahmen-hell);
+
+  --color-eingeladen: var(--farbe-eingeladen);
+  --color-eingeladen-text: var(--farbe-eingeladen-text);
+  --color-inaktiv: var(--farbe-inaktiv);
+  --color-knopf-gesperrt: var(--farbe-knopf-gesperrt);
+
+  --shadow-karte: var(--schatten-karte);
+  --shadow-karte-hover: var(--schatten-karte-hover);
+  --shadow-dialog: var(--schatten-dialog);
+  --shadow-popover: var(--schatten-popover);
+  --shadow-toast: var(--schatten-toast);
+}
+
+@layer base {
+  body {
+    background-color: var(--farbe-flaeche-2);
+    color: var(--farbe-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Überschriften in Serif (redaktioneller Charakter des Designs). */
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+  }
+
+  /* Redaktioneller Fließtext (Ziele, Vorschläge, Beschlüsse) opt-in per Klasse. */
+  .fliesstext {
+    font-family: var(--font-serif);
+  }
+
+  /* Tabellenziffern für Datums-/Zahlenausgaben (kein Layout-Springen). */
+  .ziffern-tabellarisch {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Sichtbarer Fokusring, einheitlich über alle interaktiven Elemente. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--farbe-fokus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Zeigefinger auf allen klickbaren Buttons (Tailwind v4 setzt sonst „default").
+     Deaktivierte Buttons bleiben ausgenommen, damit dort weiter „not-allowed" gilt. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+}

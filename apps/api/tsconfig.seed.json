@@ -1,0 +1,15 @@
+{
+  "//": "Kompiliert prisma/seed.ts nach dist/prisma/seed.js, damit der Demo-Seed im",
+  "//2": "Prod-Container (ohne ts-node) per `node dist/prisma/seed.js` laufen kann.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "incremental": false,
+    "declaration": false,
+    "sourceMap": false,
+    "noEmit": false
+  },
+  "include": ["prisma/seed.ts"],
+  "exclude": ["node_modules", "dist", "src", "test"]
+}

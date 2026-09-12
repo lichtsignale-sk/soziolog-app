@@ -1,0 +1,24 @@
+SozioLog — Zeitbewusstes Entscheidungs-Logbuch für soziokratisch
+organisierte Gruppen.
+
+Copyright (C) 2026 Lichtsignale GmbH & Co KG
+
+Dieses Programm ist freie Software: Sie können es unter den Bedingungen der
+GNU Affero General Public License, Version 3, weitergeben und/oder verändern.
+Den vollständigen Lizenztext finden Sie in der Datei LICENSE.
+
+Dieses Programm wird in der Hoffnung verteilt, dass es nützlich ist, jedoch
+OHNE JEDE GEWÄHRLEISTUNG — ohne die implizite Gewährleistung der
+MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Einzelheiten finden
+Sie in der GNU Affero General Public License.
+
+Sollten Sie keine Kopie der Lizenz erhalten haben, siehe
+<https://www.gnu.org/licenses/>.
+
+Warum AGPL: SozioLog wird als gehosteter Dienst angeboten. Die AGPL sorgt
+dafür, dass auch dann, wenn jemand SozioLog als Dienst für andere betreibt,
+die Änderungen am Quelltext offenliegen. Wer SozioLog selbst betreibt, darf das
+ohne Gegenleistung tun; wir empfehlen einen einmaligen Beitrag von 250 € pro
+Instanz, frei wählbar.
+
+Kontakt: hallo@soziolog.com

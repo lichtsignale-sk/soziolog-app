@@ -1,0 +1,109 @@
+# Produktions-Stack: PostgreSQL (mit Volume + täglichem Backup), NestJS-API
+# (migrate deploy beim Start + Healthcheck), statische PWA (nginx) und Caddy als
+# TLS-terminierender Reverse-Proxy. Secrets kommen aus einer .env (siehe
+# .env.example). Start:  docker compose -f docker-compose.prod.yml up -d --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: soziolog
+      POSTGRES_USER: soziolog
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD muss gesetzt sein}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U soziolog -d soziolog"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  db-backup:
+    image: postgres:16-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD muss gesetzt sein}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    volumes:
+      - ./backups:/backups
+    # Täglicher pg_dump; alte Dumps jenseits der Aufbewahrung werden entfernt.
+    command: >
+      sh -c 'while true; do
+        ts=$$(date +%Y-%m-%d_%H%M%S);
+        echo "[backup] erstelle /backups/soziolog-$$ts.sql.gz";
+        pg_dump --clean --if-exists -h db -U soziolog soziolog | gzip > /backups/soziolog-$$ts.sql.gz || echo "[backup] FEHLER";
+        find /backups -name "soziolog-*.sql.gz" -mtime +$${BACKUP_RETENTION_DAYS} -delete;
+        sleep 86400;
+      done'
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://soziolog:${POSTGRES_PASSWORD:?}@db:5432/soziolog?schema=public
+      NODE_ENV: production
+      PORT: "3000"
+      # Prod läuft hinter TLS (Caddy) -> Secure-Cookies erzwingen.
+      COOKIE_SECURE: "1"
+      # HIER 1, NICHT 2 wie bei Coolify. Der Caddyfile leitet /api/* DIREKT an
+      # api:3000 weiter — dazwischen steht kein nginx. Es gibt also genau einen
+      # Proxy. Stuende hier 2, griffe Express einen Eintrag zu weit links in
+      # X-Forwarded-For und naehme damit den Wert, den der AUFRUFER selbst
+      # geschrieben hat: Das Rate-Limit waere frei umgehbar.
+      # FEST, NICHT INTERPOLIERT ([Review B1]): Compose zieht ${…} auch aus einer
+      # .env im Projektordner. Wer .env.example uebernimmt, haette sonst still
+      # die Coolify-Vorgabe 2 hier stehen — und damit genau die Umgehung, die
+      # der Kommentar darueber beschreibt.
+      TRUST_PROXY: "1"
+      APP_URL: ${APP_URL:?APP_URL (https://deine-domain) muss gesetzt sein}
+      # JWT_SECRET, SESSION_SECRET und CONFIG_KEY kommen aus der .env oben
+      # (env_file). Compose kann sie deshalb nicht erzwingen — das tut seit
+      # [A.24] die Anwendung selbst beim Start: Platzhalter wie `change-me` oder
+      # zu kurze Werte brechen den Start ab. Siehe
+      # apps/api/src/common/geheimnisse-pruefen.ts.
+    volumes:
+      # HOCHGELADENE DATEIEN ([A.15]). Avatare liegen im Dateisystem der API
+      # unter /app/apps/api/uploads. Ohne dieses Volume waren sie nach jedem
+      # Ausrollen weg — ein neues Image, ein leeres Verzeichnis.
+      - uploads-data:/app/apps/api/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on:
+      - web
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CADDY_DOMAIN: ${CADDY_DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+
+volumes:
+  uploads-data:
+  db-data:
+  caddy-data:
+  caddy-config:

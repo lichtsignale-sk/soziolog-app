@@ -1,0 +1,33 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+allowBuilds:
+  '@nestjs/core': true
+  '@prisma/client': true
+  '@prisma/engines': true
+  argon2: true
+  esbuild: true
+  prisma: true
+
+# ===========================================================================
+# ERZWUNGENE PAKETSTAENDE
+# ===========================================================================
+#
+# pnpm ab 10 liest Overrides NUR HIER — das Feld `pnpm.overrides` in der
+# package.json wird ignoriert (mit Warnung).
+#
+# MIT NESTJS 11 SIND DIE MEISTEN UEBERFLUESSIG GEWORDEN, und das ist der
+# bessere Zustand: @nestjs/platform-express 11 bringt Express 5 mit, und damit
+# multer 2.2.0 und body-parser 2.x aus eigenem Antrieb. Ein Override auf
+# body-parser 1.x haette Express 5 sogar gebrochen — erzwungene Staende altern
+# schlecht, deshalb bleibt hier nur, was wirklich noch noetig ist.
+#
+# Jede Zeile ist eine Behauptung, die geprueft gehoert: dass die neue Fassung
+# mit dem alten Aufrufer zusammenarbeitet.
+overrides:
+  # @nestjs/config 4 zieht weiterhin lodash; <= 4.17.23 hat eine
+  # Code-Injection ueber _.template.
+  lodash: "^4.18.1"
+  # Express 5 und body-parser 2 ziehen qs 6.14; drei DoS-Befunde sind erst ab
+  # 6.15.2 behoben. Gleiche Hauptfassung, nur neuer.
+  qs: "^6.16.0"

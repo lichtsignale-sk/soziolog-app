@@ -1,0 +1,82 @@
+services:
+  db:
+    # Bild, Name und Volume entsprechen dem bestehenden Entwicklungs-Container,
+    # damit `docker compose ps` genau die DB zeigt, an der lokal gearbeitet wird.
+    image: postgres:16
+    container_name: soziolog-db
+    environment:
+      POSTGRES_DB: soziolog
+      POSTGRES_USER: soziolog
+      POSTGRES_PASSWORD: soziolog
+    volumes:
+      - soziolog-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U soziolog -d soziolog"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web-UI (http://localhost:8025)
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://soziolog:soziolog@db:5432/soziolog?schema=public
+      # Entwicklung, nicht Produktion: daneben stehen Entwicklungsgeheimnisse
+      # (JWT_SECRET: change-me) und COOKIE_SECURE=0. Gemeint war nur das
+      # knappere Logformat. Wichtig geworden ist die Bezeichnung durch
+      # SMTP_TLS_ERZWINGEN=0 weiter unten -- bei NODE_ENV=production bricht die
+      # API damit absichtlich den Start ab (apps/api/src/mail/tls-pflicht.ts).
+      #
+      # NEBENWIRKUNG, nachgeprueft: Der Seed von apps/api haengt seine einzige
+      # Schranke an NODE_ENV=production (prisma/seed.ts). Sie greift in DIESEM
+      # Container jetzt nicht mehr -- und hat hier auch nie etwas geschuetzt:
+      # Der Container zeigt auf die lokale Entwicklungsdatenbank, und vom Host
+      # aus (pnpm --filter @soziolog/api seed) lief der Seed ohnehin durch.
+      # Die Schranke, auf die es ankommt, steht in docker-compose.coolify.yml
+      # und ist unveraendert: NODE_ENV=production, DEMO_MODE nur auf der
+      # Demo-Instanz. Anders als bei control gibt es fuer apps/api KEINE zweite
+      # Schranke -- wer das aendert, aendert es dort, nicht hier.
+      NODE_ENV: development
+      PORT: 3000
+      APP_URL: http://localhost:5173
+      JWT_SECRET: change-me
+      CONFIG_KEY: change-me
+      COOKIE_SECURE: "0"
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      # NUR HIER: Mailpit spricht kein STARTTLS. In Produktion gehen ueber
+      # diesen Postausgang die Passwort-Reset-Links hinaus -- dort ist die
+      # Verschluesselung Pflicht und nicht abschaltbar.
+      SMTP_TLS_ERZWINGEN: "0"
+      SMTP_FROM: SozioLog <noreply@example.com>
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  soziolog-db-data:

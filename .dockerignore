@@ -1,0 +1,20 @@
+# Baukontext schlank halten: Abhängigkeiten/Artefakte werden im Image neu erzeugt.
+**/node_modules
+**/dist
+# WICHTIG: ohne diese Zeile landet packages/shared/tsconfig.tsbuildinfo im
+# Baukontext, waehrend dist/ ausgeschlossen ist. `tsc --build` haelt das
+# Projekt dann fuer aktuell und erzeugt KEIN dist — der spaetere
+# `COPY --from=build /app/packages/shared/dist` schlaegt fehl.
+**/*.tsbuildinfo
+**/.turbo
+.git
+.gitignore
+backups
+playwright-report
+test-results
+**/*.log
+# Auf ALLEN Ebenen ausschließen: ein blosses `.env` greift nur in der Wurzel,
+# `apps/*/.env` und Sicherungen wie `.env.bak` blieben sonst im Baukontext.
+**/.env
+**/.env.*
+!**/.env.example

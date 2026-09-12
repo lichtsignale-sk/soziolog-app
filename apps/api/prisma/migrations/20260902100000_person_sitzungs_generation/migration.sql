@@ -1,0 +1,14 @@
+-- Zaehler zur Entwertung bereits ausgestellter Sitzungen.
+--
+-- Bis hierher entwertete weder das Abmelden noch ein Passwortwechsel das
+-- Sitzungs-JWT: es blieb sieben Tage gueltig. Wer ein Konto uebernommen hatte,
+-- blieb also auch nach dem Zuruecksetzen des Passworts angemeldet.
+--
+-- Jedes ausgestellte JWT traegt kuenftig den Stand dieses Zaehlers; der
+-- SitzungGuard vergleicht ihn. Passwortwechsel und Passwort-Reset zaehlen hoch
+-- und beenden damit alle bestehenden Sitzungen der Person.
+--
+-- Vorhandene Zeilen starten bei 0. Bereits ausgestellte Token tragen noch gar
+-- keinen Stand und werden vom Guard abgelehnt — die einmalige Folge des
+-- Ausrollens ist, dass alle angemeldeten Personen sich neu anmelden muessen.
+ALTER TABLE "Person" ADD COLUMN "sitzungsGeneration" INTEGER NOT NULL DEFAULT 0;

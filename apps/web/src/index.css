@@ -1,0 +1,107 @@
+@import "tailwindcss";
+@import "@soziolog/ui/tokens.css";
+
+/* Tailwind schließt node_modules von der Klassen-Suche aus. @soziolog/ui liegt
+   im pnpm-Workspace nur als Symlink darunter und würde deshalb NICHT gescannt —
+   die Utility-Klassen der geteilten Komponenten fielen still aus dem Bundle.
+   Diese Zeile meldet die Quelle des Pakets explizit an. */
+@source "../../../packages/ui/src";
+/* Testdateien beschreiben keine Oberfläche. Ohne diese Zeile landen
+   Klassennamen aus Testfixtures im ausgelieferten Stylesheet. */
+@source not "../../../packages/ui/src/**/*.test.tsx";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Domänen-Baum: org-chart-artige Verbinderlinien (reines CSS über ::before/
+   ::after). Wurzeln (mehrere Hauptdomänen) werden untereinander gestapelt und
+   NICHT miteinander verbunden; innerhalb eines Baums ziehen dünne Linien vom
+   Elternknoten zu den Kindern.
+   ───────────────────────────────────────────────────────────────────────── */
+.baum {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+.baum > li {
+  list-style: none;
+}
+/* Kinder-Reihe eines Knotens */
+.baum-ul {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding-top: 22px;
+}
+/* Stamm vom Elternknoten hinab zur Geschwister-Querlinie */
+.baum-ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 22px;
+  background: var(--farbe-rahmen);
+}
+.baum-ul > li {
+  list-style: none;
+  position: relative;
+  padding: 22px 16px 0;
+}
+/* Querlinien + Abzweig zu jedem Kind */
+.baum-ul > li::before,
+.baum-ul > li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: 22px;
+  border-top: 1px solid var(--farbe-rahmen);
+}
+.baum-ul > li::after {
+  right: auto;
+  left: 50%;
+  border-left: 1px solid var(--farbe-rahmen);
+}
+/* Einzelkind: keine Querlinie, aber ein senkrechter Ast bis zum Kind
+   (sonst hinge der einzelne Unterknoten ohne Verbindung darunter). */
+.baum-ul > li:only-child::before {
+  display: none;
+}
+.baum-ul > li:only-child::after {
+  border-top: 0 none;
+}
+/* Ränder der Querlinie an den Enden kappen (saubere Ecken) */
+.baum-ul > li:first-child::before,
+.baum-ul > li:last-child::after {
+  border: 0 none;
+}
+.baum-ul > li:last-child::before {
+  border-right: 1px solid var(--farbe-rahmen);
+}
+/* Ein Einzelkind ist zugleich :first-child UND :last-child, weshalb die Regel
+   oben (border: 0 none) auch seinen senkrechten Ast kappt. Hier den Ast wieder
+   herstellen, damit die Linie durchgehend bis zur einzelnen Unterdomäne reicht.
+   Steht bewusst NACH der obigen Regel, um sie per Quellreihenfolge zu schlagen. */
+.baum-ul > li:only-child::after {
+  border-left: 1px solid var(--farbe-rahmen);
+}
+
+/* Karten über die Verbinderlinien legen: die ::before/::after der <li> werden
+   nach der Karte gemalt und lägen sonst beim Hover-Anheben (-translate-y) als
+   grauer Linienstummel auf der Karte. z-index hebt die Karte darüber. */
+.baum-ul > li > div {
+  position: relative;
+  z-index: 1;
+}
+
+/* Bewegung reduzieren, wenn vom System gewünscht. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,371 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum GovernanceTyp {
+  governance
+  operativ
+}
+
+enum VorschlagStatus {
+  offen
+  entschieden
+  zurueckgezogen
+}
+
+enum EinwandSchweregrad {
+  leicht
+  schwerwiegend
+}
+
+enum Befristung {
+  befristet
+  unbefristet
+}
+
+enum GueltigkeitStatus {
+  gueltig
+  in_ueberpruefung
+  ersetzt
+  beendet
+}
+
+enum DomaeneTyp {
+  dauerdomaene
+  arbeitsdomaene
+}
+
+enum RolleTyp {
+  moderation
+  logbuchfuehrer
+  delegierte
+}
+
+enum EinladungStatus {
+  offen
+  eingeloest
+  abgelaufen
+}
+
+enum KorrekturZielTyp {
+  vorschlag
+  bedenken
+  einwand
+  beschluss
+}
+
+enum KorrekturStatus {
+  offen
+  bestaetigt
+  abgelehnt
+}
+
+enum BenachrichtigungTyp {
+  ueberpruefung_faellig
+  korrektur_beantragt
+  korrektur_bestaetigt
+  korrektur_abgelehnt
+  vorschlag_neu
+  beschluss_neu
+}
+
+model Organisation {
+  id                      String   @id @default(uuid())
+  name                    String
+  einwaendeAnonym         Boolean  @default(true)
+  handlungenRollenbasiert Boolean  @default(true)
+  setupAbgeschlossen      Boolean  @default(false)
+  angelegtAm              DateTime @db.Date @default(now())
+  personen                Person[]
+  domaenen                Domaene[]
+}
+
+model Person {
+  id                      String   @id @default(uuid())
+  organisationId          String
+  organisation            Organisation @relation(fields: [organisationId], references: [id])
+  name                    String
+  displayName             String?
+  nutzername              String   @unique
+  loginEmail              String   @unique
+  passwortHash            String?
+  passwortGeaendertAm     DateTime? @db.Date
+  // Zaehler zur Entwertung bereits ausgestellter Sitzungen. Jedes Sitzungs-JWT
+  // traegt den Stand, den es bei der Ausstellung vorfand; der SitzungGuard
+  // vergleicht ihn mit diesem Wert. Ein Hochzaehlen macht ALLE bestehenden
+  // Sitzungen dieser Person sofort ungueltig. Erhoeht wird bei Passwortwechsel
+  // und Passwort-Reset — sonst bliebe ein Angreifer nach der Rueckeroberung
+  // eines Kontos bis zu sieben Tage angemeldet.
+  // BEWUSST ein Zaehler und kein Datum: passwortGeaendertAm ist nach Regel 1 ein
+  // reines Tagesdatum und koennte eine Sitzung, die am selben Tag ausgestellt
+  // wurde, nicht von einer aelteren unterscheiden.
+  sitzungsGeneration      Int      @default(0)
+  // Fehlversuchszaehler und Sperre fuer die Passwortanmeldung. Das
+  // IP-Rate-Limit allein schuetzt ein einzelnes Konto nicht: Es begrenzt, wie
+  // oft EINE Adresse fragen darf, nicht wie oft AUF EIN KONTO geraten wird.
+  // docs/04-sicherheit.md verlangt ausdruecklich Backoff.
+  fehlversuche            Int      @default(0)
+  // BEWUSSTE Ausnahme von der Tagesdatum-Regel, wie zweiFaktorCodeLaeuftAbAm:
+  // Eine Sperre auf Tagesbasis waere entweder wirkungslos oder wuerde ein Konto
+  // den ganzen Tag aussperren. Gebraucht werden Minuten.
+  gesperrtBis             DateTime?
+  // Tag der letzten erfolgreichen Anmeldung. Reines Tagesdatum (Regel 1):
+  // gebraucht wird "wird die Instanz noch benutzt", nicht die Uhrzeit.
+  // Einzige Verwendung ist der Zählwert `letzteAnmeldungAm` des internen
+  // Kennzahlen-Endpunkts (src/intern) — dort wird nur das MAXIMUM über alle
+  // Personen ausgegeben, nie ein Personenbezug.
+  letzteAnmeldungAm       DateTime? @db.Date
+  istAdmin                Boolean  @default(false)
+  benachrichtigungenAktiv Boolean  @default(true)
+  aktiv                   Boolean  @default(true)
+  angelegtAm              DateTime @db.Date @default(now())
+  avatarColor             String?
+  avatarTextColor         String?
+  avatarUrl               String?
+  zweiFaktorAktiv         Boolean  @default(false)
+  // E-Mail-2FA: kurzlebiger, argon2-gehashter Login-Code (kein TOTP/QR).
+  zweiFaktorCodeHash      String?
+  // BEWUSSTE Ausnahme von der reinen Tagesdatum-Regel: der Login-Code braucht
+  // Minuten-genaue Gültigkeit (10 Min) und eine 60-Sekunden-Sperre fürs
+  // erneute Anfordern – daher volle Zeitstempel statt @db.Date.
+  zweiFaktorCodeLaeuftAbAm DateTime?
+  zweiFaktorCodeGesendetAm DateTime?
+
+  mitgliedschaften        Mitgliedschaft[]
+  rollen                  Rollenzuweisung[]
+  einladung               Einladung?
+  passwortResets          PasswortReset[]
+  vorschlaegeErfasst      Vorschlag[]  @relation("VorschlagErfasser")
+  bedenkenErfasst         Bedenken[]   @relation("BedenkenErfasser")
+  einwaendeErfasst        Einwand[]    @relation("EinwandErfasser")
+  beschluesseErfasst      Beschluss[]  @relation("BeschlussErfasser")
+  korrekturBeantragt      Korrekturantrag[] @relation("KorrekturAntragsteller")
+  korrekturBestaetigt     Korrekturantrag[] @relation("KorrekturBestaetiger")
+  benachrichtigungen      BenachrichtigungEmpfang[]
+}
+
+model Einladung {
+  id           String          @id @default(uuid())
+  personId     String          @unique
+  person       Person          @relation(fields: [personId], references: [id])
+  tokenHash    String
+  laeuftAbAm   DateTime        @db.Date
+  eingeloestAm DateTime?       @db.Date
+  status       EinladungStatus @default(offen)
+}
+
+model PasswortReset {
+  id           String    @id @default(uuid())
+  personId     String
+  person       Person    @relation(fields: [personId], references: [id])
+  tokenHash    String
+  laeuftAbAm   DateTime  @db.Date
+  eingeloestAm DateTime? @db.Date
+}
+
+model Systemkonfiguration {
+  id                 String   @id @default(uuid())
+  schluessel         String   @unique
+  wertVerschluesselt String
+  aktualisiertAm     DateTime @db.Date @default(now())
+}
+
+model Domaene {
+  id              String     @id @default(uuid())
+  organisationId  String
+  organisation    Organisation @relation(fields: [organisationId], references: [id])
+  elternDomaeneId String?
+  elternDomaene   Domaene?   @relation("DomaeneHierarchie", fields: [elternDomaeneId], references: [id])
+  unterDomaenen   Domaene[]  @relation("DomaeneHierarchie")
+  name            String
+  ziel            String
+  tasks           String[]  @default([])
+  typ             DomaeneTyp @default(dauerdomaene)
+  aktiv           Boolean   @default(true)
+  gegruendetAm    DateTime  @db.Date @default(now())
+  archiviert      Boolean   @default(false)
+  archiviertAm    DateTime? @db.Date
+
+  mitgliedschaften   Mitgliedschaft[]
+  rollen             Rollenzuweisung[]
+  vorschlaege        Vorschlag[]
+  sitzungen          Sitzung[]
+  benachrichtigungen Benachrichtigung[]
+}
+
+model Mitgliedschaft {
+  id         String    @id @default(uuid())
+  personId   String
+  person     Person    @relation(fields: [personId], references: [id])
+  domaeneId  String
+  domaene    Domaene   @relation(fields: [domaeneId], references: [id])
+  gueltigAb  DateTime  @db.Date @default(now())
+  gueltigBis DateTime? @db.Date
+
+  @@index([personId])
+  @@index([domaeneId])
+}
+
+model Rollenzuweisung {
+  id         String    @id @default(uuid())
+  personId   String
+  person     Person    @relation(fields: [personId], references: [id])
+  domaeneId  String
+  domaene    Domaene   @relation(fields: [domaeneId], references: [id])
+  rolleTyp   RolleTyp
+  gueltigAb  DateTime  @db.Date @default(now())
+  gueltigBis DateTime? @db.Date
+
+  @@index([personId])
+  @@index([domaeneId])
+}
+
+model Sitzung {
+  id          String    @id @default(uuid())
+  domaeneId   String
+  domaene     Domaene   @relation(fields: [domaeneId], references: [id])
+  datum       DateTime  @db.Date
+  titel       String?
+  notiz       String?
+  vorschlaege Vorschlag[]
+}
+
+model Vorschlag {
+  id            String          @id @default(uuid())
+  domaeneId     String
+  domaene       Domaene         @relation(fields: [domaeneId], references: [id])
+  sitzungId     String?
+  sitzung       Sitzung?        @relation(fields: [sitzungId], references: [id])
+  erfasstVonId  String
+  erfasstVon    Person          @relation("VorschlagErfasser", fields: [erfasstVonId], references: [id])
+  titel         String
+  inhalt        String
+  governanceTyp GovernanceTyp
+  status        VorschlagStatus @default(offen)
+  datum         DateTime        @db.Date @default(now())
+  // Neufassung: markiert diesen Vorschlag als Ablösung eines bestehenden
+  // Beschlusses. Beim Fassen des neuen Beschlusses wird daraus die Ablösung
+  // (ersetztBeschlussId) übernommen. Persistent, damit die Absicht auch vor dem
+  // Beschluss sichtbar bleibt und einen Reload übersteht.
+  ersetztBeschlussId String?    @unique
+  ersetztBeschluss   Beschluss? @relation("VorschlagNeufassung", fields: [ersetztBeschlussId], references: [id])
+
+  bedenken  Bedenken[]
+  einwaende Einwand[]
+  beschluss Beschluss?
+
+  @@index([domaeneId, datum])
+}
+
+model Bedenken {
+  id           String    @id @default(uuid())
+  vorschlagId  String
+  vorschlag    Vorschlag @relation(fields: [vorschlagId], references: [id], onDelete: Cascade)
+  erfasstVonId String
+  erfasstVon   Person    @relation("BedenkenErfasser", fields: [erfasstVonId], references: [id])
+  inhalt       String
+  datum        DateTime  @db.Date @default(now())
+}
+
+model Einwand {
+  id           String             @id @default(uuid())
+  vorschlagId  String
+  vorschlag    Vorschlag          @relation(fields: [vorschlagId], references: [id], onDelete: Cascade)
+  erfasstVonId String
+  erfasstVon   Person             @relation("EinwandErfasser", fields: [erfasstVonId], references: [id])
+  inhalt       String
+  schweregrad  EinwandSchweregrad
+  integration  String?
+  datum        DateTime           @db.Date @default(now())
+}
+
+model Beschluss {
+  id                  String            @id @default(uuid())
+  vorschlagId         String            @unique
+  vorschlag           Vorschlag         @relation(fields: [vorschlagId], references: [id])
+  ersetztBeschlussId  String?           @unique
+  ersetztBeschluss    Beschluss?        @relation("BeschlussAbloesung", fields: [ersetztBeschlussId], references: [id])
+  ersetztDurch        Beschluss?        @relation("BeschlussAbloesung")
+  // Vorschlag, der als Neufassung diesen Beschluss ablösen soll (vor dem Fassen).
+  neufassungVorschlag Vorschlag?        @relation("VorschlagNeufassung")
+  erfasstVonId        String
+  erfasstVon          Person            @relation("BeschlussErfasser", fields: [erfasstVonId], references: [id])
+  inhalt              String
+  notiz               String?
+  befristung          Befristung
+  ueberpruefungsdatum DateTime?         @db.Date
+  gueltigkeitStatus   GueltigkeitStatus @default(gueltig)
+  gueltigAb           DateTime          @db.Date @default(now())
+  gueltigBis          DateTime?         @db.Date
+  datum               DateTime          @db.Date @default(now())
+
+  benachrichtigungen Benachrichtigung[]
+
+  @@index([gueltigAb])
+  @@index([gueltigBis])
+  @@index([gueltigkeitStatus])
+}
+
+model Korrekturantrag {
+  id              String           @id @default(uuid())
+  zielTyp         KorrekturZielTyp
+  zielId          String
+  feld            String
+  alterInhalt     String
+  neuerInhalt     String
+  begruendung     String?
+  ablehnungsgrund String?
+  // Antragsteller: FK für App-Anträge; Name/Rolle/Domäne denormalisiert, damit
+  // auch historische Antragsteller (nicht als Person geführt) namentlich
+  // angezeigt werden können.
+  beantragtVonId  String?
+  beantragtVon    Person?          @relation("KorrekturAntragsteller", fields: [beantragtVonId], references: [id])
+  beantragtVonName    String?
+  beantragtVonRolle   String?
+  beantragtVonDomaene String?
+  bestaetigtVonId String?
+  bestaetigtVon   Person?          @relation("KorrekturBestaetiger", fields: [bestaetigtVonId], references: [id])
+  bestaetigtVonName String?
+  status          KorrekturStatus  @default(offen)
+  beantragtAm     DateTime         @db.Date @default(now())
+  entschiedenAm   DateTime?        @db.Date
+
+  benachrichtigungen Benachrichtigung[]
+}
+
+model Benachrichtigung {
+  id                  String              @id @default(uuid())
+  typ                 BenachrichtigungTyp
+  betrifftBeschlussId String?
+  betrifftBeschluss   Beschluss?          @relation(fields: [betrifftBeschlussId], references: [id])
+  betrifftKorrekturId String?
+  betrifftKorrektur   Korrekturantrag?    @relation(fields: [betrifftKorrekturId], references: [id])
+  // Leichter Zeiger auf den neuen Vorschlag (vorschlag_neu/beschluss_neu) für
+  // den Sprung ins Domänen-Log – bewusst ohne FK-Relation (nur Deep-Link).
+  betrifftVorschlagId String?
+  domaeneId           String?
+  domaene             Domaene?            @relation(fields: [domaeneId], references: [id])
+  inhalt              String
+  faelligAm           DateTime?           @db.Date
+  erstelltAm          DateTime            @db.Date @default(now())
+
+  empfaenger BenachrichtigungEmpfang[]
+}
+
+model BenachrichtigungEmpfang {
+  id                 String           @id @default(uuid())
+  benachrichtigungId String
+  benachrichtigung   Benachrichtigung @relation(fields: [benachrichtigungId], references: [id], onDelete: Cascade)
+  personId           String
+  person             Person           @relation(fields: [personId], references: [id])
+  gelesen            Boolean          @default(false)
+  gelesenAm          DateTime?        @db.Date
+  perEmailGesendet   Boolean          @default(false)
+
+  @@unique([benachrichtigungId, personId])
+}
