@@ -31,3 +31,8 @@ overrides:
   # Express 5 und body-parser 2 ziehen qs 6.14; drei DoS-Befunde sind erst ab
   # 6.15.2 behoben. Gleiche Hauptfassung, nur neuer.
   qs: "^6.16.0"
+  # @nestjs/platform-express 11.2.3 pinnt multer EXAKT auf 2.2.0. Drei
+  # DoS-Befunde (GHSA-wc9g-mqfw-jrwm, GHSA-535w-7cp7-47q4, GHSA-qfvm-cv95-jqjf)
+  # sind erst ab 2.3.0 behoben. Gleiche Hauptfassung, nur neuer. Faellt weg,
+  # sobald platform-express selbst >= 2.3.0 verlangt.
+  multer: "^2.3.0"
