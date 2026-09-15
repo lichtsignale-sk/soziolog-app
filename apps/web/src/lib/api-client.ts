@@ -57,12 +57,20 @@ async function csrfHeaderWert(): Promise<string> {
 
 export async function apiFetch<T>(
   path: string,
-  options?: RequestInit,
+  optionenMitStumm?: RequestInit & {
+    /**
+     * Kein Toast bei Fehlern — für Aufrufer, die den Fehler selbst im
+     * Zusammenhang anzeigen (sonst stünde die Meldung doppelt da) oder
+     * bewusst still übergehen.
+     */
+    stumm?: boolean;
+  },
 ): Promise<T> {
-  const methode = (options?.method ?? 'GET').toUpperCase();
+  const { stumm = false, ...options } = optionenMitStumm ?? {};
+  const methode = (options.method ?? 'GET').toUpperCase();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options?.headers as Record<string, string> | undefined),
+    ...(options.headers as Record<string, string> | undefined),
   };
 
   // CSRF-Token bei schreibenden Requests mitsenden (Double-Submit).
@@ -91,7 +99,7 @@ export async function apiFetch<T>(
     if (import.meta.env['VITE_DEBUG'] === '1') {
       console.debug('[apiFetch] Fehler:', fehler);
     }
-    zeigeToast(fehler.nachricht);
+    if (!stumm) zeigeToast(fehler.nachricht);
     throw new ApiError(fehler, res.status);
   }
 

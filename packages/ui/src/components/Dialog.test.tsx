@@ -120,4 +120,55 @@ describe('Dialog — Fokus beim Tippen', () => {
 
     expect(document.activeElement).toBe(oeffnen);
   });
+
+  /**
+   * Regressionstest: Mit `autoFocus` im Inhalt merkte sich der Dialog das
+   * FELD als „vorher fokussiert" (autoFocus greift vor dem Effekt) und gab
+   * den Fokus beim Schliessen an ein entferntes Element — er fiel auf <body>.
+   */
+  it('gibt den Fokus auch mit autoFocus im Inhalt an den Ausloeser zurueck', () => {
+    function Umschalter() {
+      const [offen, setOffen] = useState(false);
+      return (
+        <>
+          <button onClick={() => setOffen(true)}>Oeffnen</button>
+          <Dialog offen={offen} titel="Test" onSchliessen={() => setOffen(false)}>
+            <textarea aria-label="Text" autoFocus />
+          </Dialog>
+        </>
+      );
+    }
+    render(<Umschalter />);
+    const oeffnen = screen.getByRole('button', { name: 'Oeffnen' });
+    oeffnen.focus();
+    fireEvent.click(oeffnen);
+    expect(document.activeElement).toBe(screen.getByLabelText('Text'));
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(document.activeElement).toBe(oeffnen);
+  });
+
+  it('greift nicht ins Leere, wenn der Ausloeser inzwischen verschwunden ist', () => {
+    function Umschalter() {
+      const [offen, setOffen] = useState(false);
+      return (
+        <>
+          {!offen && <button onClick={() => setOffen(true)}>Oeffnen</button>}
+          <button>Bleibt</button>
+          <Dialog offen={offen} titel="Test" onSchliessen={() => setOffen(false)}>
+            <p>Inhalt</p>
+          </Dialog>
+        </>
+      );
+    }
+    render(<Umschalter />);
+    const oeffnen = screen.getByRole('button', { name: 'Oeffnen' });
+    oeffnen.focus();
+    fireEvent.click(oeffnen);
+
+    expect(() => fireEvent.keyDown(document, { key: 'Escape' })).not.toThrow();
+    expect(oeffnen.isConnected).toBe(false);
+    expect(document.activeElement).not.toBe(oeffnen);
+  });
 });

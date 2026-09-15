@@ -30,6 +30,7 @@ import { BenachrichtigungModule } from './benachrichtigung/benachrichtigung.modu
 import { AnfrageModule } from './anfrage/anfrage.module';
 import { ExportModule } from './export/export.module';
 import { InternModule } from './intern/intern.module';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -120,6 +121,7 @@ import { InternModule } from './intern/intern.module';
     AnfrageModule,
     ExportModule,
     InternModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [

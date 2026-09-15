@@ -50,6 +50,22 @@ export function Dialog({
   const titelId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const vorherFokus = useRef<HTMLElement | null>(null);
+  const warOffen = useRef(false);
+
+  /**
+   * DEN AUSLÖSER BEIM ÖFFNEN MERKEN — IM RENDERN, NICHT IM EFFEKT.
+   *
+   * React wertet `autoFocus` im Commit aus, also VOR dem Effekt unten. Hat der
+   * Inhalt ein Feld mit `autoFocus`, stünde dort sonst schon dieses Feld als
+   * „vorher fokussiert" — und beim Schließen ginge der Fokus an ein Element,
+   * das es dann nicht mehr gibt: er landete auf <body>. Im Rendern ist der
+   * Auslöser noch der aktive Knopf. Nur beim Übergang zu/offen, damit ein
+   * erneutes Rendern bei offenem Dialog nichts überschreibt.
+   */
+  if (offen && !warOffen.current && typeof document !== 'undefined') {
+    vorherFokus.current = document.activeElement as HTMLElement | null;
+  }
+  warOffen.current = offen;
 
   /**
    * DER SCHLIESSEN-RUF LIEGT IN EINER REF, UND DAS IST DER GANZE PUNKT.
@@ -74,7 +90,6 @@ export function Dialog({
 
   useEffect(() => {
     if (!offen) return;
-    vorherFokus.current = document.activeElement as HTMLElement | null;
     dialogStapel.push(titelId);
     const panel = panelRef.current;
 
@@ -119,7 +134,10 @@ export function Dialog({
       document.removeEventListener('keydown', beiTaste);
       const i = dialogStapel.lastIndexOf(titelId);
       if (i >= 0) dialogStapel.splice(i, 1);
-      vorherFokus.current?.focus();
+      // Nur zurückgeben, wenn der Auslöser noch da ist (z. B. nicht mit einem
+      // Drawer verschwunden) — sonst fiele der Fokus ins Leere.
+      const ziel = vorherFokus.current;
+      if (ziel?.isConnected) ziel.focus();
     };
   }, [offen, titelId]);
 

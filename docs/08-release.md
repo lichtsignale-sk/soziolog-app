@@ -11,7 +11,8 @@ Ein Update wird gebaut und dann auf jede Instanz ausgerollt.
   - MAJOR: inkompatible Änderung (z. B. Datenmodell, das alte Daten anders deutet).
 - **Quellen der Versionsnummer (bei jedem Release gemeinsam hochziehen):**
   1. `apps/api/src/version.ts` (`APP_VERSION`) — Laufzeitwert für `/api/version`.
-  2. `package.json` in Root, `apps/api`, `apps/web`, `packages/shared`.
+  2. `package.json` in Root, `apps/api`, `apps/web`, `packages/shared`,
+     `packages/ui`.
   3. Ein neuer datierter Abschnitt in `CHANGELOG.md`.
 
 ## Release-Schritte

@@ -62,6 +62,38 @@ Die Erlaubnisliste der Antwortfelder ist in
 siebtes Feld und keinen Wert zu, der kein Zählwert, kein Tagesdatum, keine
 Versionsnummer und kein Zustand ist.
 
+### `FEEDBACK_EMPFAENGER` / `FEEDBACK_SCHALTER_URL` — optional, Feedback aus der App
+
+Mit `FEEDBACK_EMPFAENGER=<adresse>` erscheint in der Seitenleiste der Punkt
+**„Feedback geben"**. Er öffnet einen Dialog über der aktuellen Seite; das
+Absenden schickt eine Mail an diese Adresse (über denselben Postausgang wie
+Einladungen). Die Mail enthält:
+
+- den Namen der Organisation — mit `DEMO_MODE=1` stattdessen „Eine Person in
+  der Demo",
+- die Seite (lesbarer Name und Pfad, ohne Query), Tagesdatum und App-Fassung,
+- den Text,
+- **nur mit dem Häkchen „Rückfragen erlaubt"** Name und Anmelde-Adresse der
+  Person; die Adresse wird dann auch Antwortadresse. In der Demo gibt es das
+  Häkchen nicht.
+
+Der Text wird **weder gespeichert noch geloggt**. Pro Adresse gehen höchstens
+drei Feedbacks in zehn Minuten, pro Instanz höchstens 30 in der Stunde.
+
+Im Dialog steht „Dein Feedback geht direkt an …". Wer dort genannt wird,
+bestimmt `FEEDBACK_EMPFAENGER_NAME` (z. B. `das Team von Beispiel e. V.`);
+ohne die Variable heißt es „das Team, das diese Instanz betreut".
+
+**Ohne `FEEDBACK_EMPFAENGER` gibt es den Punkt nicht**, und `POST
+/api/feedback` antwortet mit 404.
+
+`FEEDBACK_SCHALTER_URL` ist optional: eine Adresse, die mit
+`{ "feedback": true }` oder `{ "feedback": false }` antwortet. Damit lässt sich
+das Modul für mehrere Instanzen an einer Stelle abschalten, ohne sie neu
+auszurollen. Die Instanz fragt dort höchstens alle fünf Minuten nach und
+schickt dabei nichts mit. Ist die Adresse nicht erreichbar, gilt der letzte
+bekannte Stand, vor der ersten Antwort „an".
+
 ### `SETUP_TOKEN` — schützt das Erst-Setup
 
 ```bash

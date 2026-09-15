@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   Folder,
@@ -11,12 +11,14 @@ import {
   Menu,
   X,
   LogOut,
+  MessageSquareHeart,
   type LucideIcon,
 } from 'lucide-react';
 import type { DomaeneKnotenDTO } from '@soziolog/shared';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../lib/api-client';
 import { Benachrichtigungszentrum } from './Benachrichtigungszentrum';
+import { FeedbackModal } from './FeedbackModal';
 
 const SIDEBAR_DOMAENEN_KEY = 'soziolog:sidebar:domaenen-offen';
 
@@ -222,15 +224,39 @@ function NavListeOben({
   );
 }
 
+/**
+ * „Feedback geben": ein KNOPF, kein Link — er öffnet einen Dialog über der
+ * aktuellen Seite, statt wegzunavigieren. Zart grün hinterlegt und umrandet,
+ * damit er auffällt, ohne mit dem aktiven Eintrag verwechselt zu werden. Kein
+ * Punkt daneben: Der läse sich wie ein Ungelesen-Zeichen.
+ */
+function FeedbackEintrag({ onOeffnen }: { onOeffnen: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onOeffnen}
+      aria-haspopup="dialog"
+      className="mb-1 flex w-full items-center gap-3 rounded-lg border border-primaer-softrahmen bg-primaer-softer px-3 py-2 text-left text-base font-medium text-primaer-softtext transition-colors duration-150 hover:bg-primaer-soft"
+    >
+      <MessageSquareHeart className="h-5 w-5 shrink-0" aria-hidden="true" />
+      Feedback geben
+    </button>
+  );
+}
+
 function NavListeUnten({
   istAdmin,
   onNavigieren,
+  onFeedback,
 }: {
   istAdmin: boolean;
   onNavigieren?: () => void;
+  /** Nur gesetzt, wenn das Feedback-Modul an ist. */
+  onFeedback?: () => void;
 }) {
   return (
     <nav aria-label="Konto und Verwaltung" className="flex flex-col gap-1">
+      {onFeedback && <FeedbackEintrag onOeffnen={onFeedback} />}
       {NAV_UNTEN.filter((z) => !z.nurAdmin || istAdmin).map((z) => (
         <NavLink
           key={z.pfad}
@@ -258,6 +284,9 @@ export function AppShell() {
   const { person, logout } = useAuth();
   const [drawerOffen, setDrawerOffen] = useState(false);
   const [domaenen, setDomaenen] = useState<DomaeneKnotenDTO[] | null>(null);
+  const [feedbackAktiv, setFeedbackAktiv] = useState(false);
+  const [feedbackEmpfaenger, setFeedbackEmpfaenger] = useState<string | undefined>();
+  const [feedbackOffen, setFeedbackOffen] = useState(false);
 
   // Mobile-Navigation per Escape schließbar (Tastaturbedienung).
   useEffect(() => {
@@ -276,6 +305,30 @@ export function AppShell() {
       .catch(() => setDomaenen([]));
   }, []);
 
+  // Ob der Punkt „Feedback geben" erscheint, entscheidet der Server. Im
+  // Zweifel (Fehler) bleibt er weg — still, ohne Toast.
+  useEffect(() => {
+    apiFetch<{ aktiv: boolean; empfaengerName?: string }>('/api/feedback/status', {
+      stumm: true,
+    })
+      .then((s) => {
+        setFeedbackAktiv(s?.aktiv === true);
+        setFeedbackEmpfaenger(s?.empfaengerName);
+      })
+      .catch(() => setFeedbackAktiv(false));
+  }, []);
+
+  const menueKnopfRef = useRef<HTMLButtonElement>(null);
+
+  const oeffneFeedbackAusDrawer = () => {
+    // Der auslösende Knopf verschwindet mit dem Drawer. Ohne diesen Schritt
+    // gäbe der Dialog den Fokus beim Schließen an ein entferntes Element
+    // zurück — er landete auf <body>. So kehrt er zum Menü-Knopf zurück.
+    menueKnopfRef.current?.focus();
+    setDrawerOffen(false);
+    setFeedbackOffen(true);
+  };
+
   if (!person) return null;
 
   return (
@@ -292,6 +345,7 @@ export function AppShell() {
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-rahmen bg-flaeche px-4">
         <div className="flex items-center gap-2">
           <button
+            ref={menueKnopfRef}
             className="grid h-10 w-10 place-items-center rounded-lg text-text hover:bg-flaeche-3 lg:hidden"
             aria-label="Navigation öffnen"
             aria-expanded={drawerOffen}
@@ -324,7 +378,10 @@ export function AppShell() {
             <NavListeOben domaenen={domaenen} />
           </div>
           <div className="border-t border-rahmen p-4">
-            <NavListeUnten istAdmin={person.istAdmin} />
+            <NavListeUnten
+              istAdmin={person.istAdmin}
+              onFeedback={feedbackAktiv ? () => setFeedbackOffen(true) : undefined}
+            />
           </div>
         </aside>
 
@@ -361,11 +418,21 @@ export function AppShell() {
               <NavListeUnten
                 istAdmin={person.istAdmin}
                 onNavigieren={() => setDrawerOffen(false)}
+                onFeedback={feedbackAktiv ? oeffneFeedbackAusDrawer : undefined}
               />
             </div>
           </aside>
         </div>
       )}
+
+      {/* Außerhalb des Drawers: der schließt sich beim Öffnen und nähme den
+          Dialog sonst mit. */}
+      <FeedbackModal
+        offen={feedbackOffen}
+        empfaengerName={feedbackEmpfaenger}
+        onSchliessen={() => setFeedbackOffen(false)}
+        onNichtVerfuegbar={() => setFeedbackAktiv(false)}
+      />
     </div>
   );
 }

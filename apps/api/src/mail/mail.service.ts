@@ -31,6 +31,36 @@ interface Transport {
   nurLog: boolean;
 }
 
+/** Inhalt einer Feedback-Mail an das Team (`FeedbackService`). */
+export interface FeedbackMailDaten {
+  /** Organisationsname — oder in einer Demo „Eine Person in der Demo". */
+  herkunft: string;
+  demo: boolean;
+  /** Pfad der Seite, z. B. `/gesamt-log`. */
+  seite: string;
+  seitenBezeichnung: string;
+  /** Adresse der Instanz (`APP_URL`), falls gesetzt. */
+  instanz?: string;
+  version: string;
+  /** Tagesdatum YYYY-MM-DD. */
+  datum: string;
+  text: string;
+  /** Nur mit Häkchen „Rückfragen erlaubt"; wird auch Antwortadresse. */
+  kontakt?: { name: string; email: string };
+}
+
+/** Steuerzeichen raus — der Wert landet in einer Kopfzeile (Betreff). */
+function ohneSteuerzeichen(wert: string): string {
+  // eslint-disable-next-line no-control-regex
+  return wert.replace(/[\x00-\x1f\x7f]+/g, ' ').trim();
+}
+
+/** YYYY-MM-DD → TT.MM.JJJJ (nur Anzeige). */
+function tagDeutsch(datum: string): string {
+  const [jahr, monat, tag] = datum.split('-');
+  return jahr && monat && tag ? `${tag}.${monat}.${jahr}` : datum;
+}
+
 /**
  * Versendet E-Mails per Nodemailer. Die SMTP-Zugangsdaten kommen bevorzugt aus
  * der (verschlüsselten) Systemkonfiguration (nach dem Setup), sonst aus den
@@ -118,6 +148,7 @@ export class MailService {
     html: string,
     devHinweis: string,
     anhaenge?: { filename: string; content: Buffer; contentType?: string }[],
+    optionen?: { antwortAn?: { name: string; address: string } },
   ): Promise<void> {
     const { transporter, absender, nurLog } = await this.transport();
     await transporter.sendMail({
@@ -129,6 +160,10 @@ export class MailService {
       text: mailText(text),
       html,
       attachments: anhaenge,
+      // Als Adressobjekt, nicht als Zeichenkette: nodemailer kodiert den
+      // Namen dann selbst, und ein Komma oder Anführungszeichen darin kann
+      // keine zweite Adresse erzeugen.
+      ...(optionen?.antwortAn ? { replyTo: optionen.antwortAn } : {}),
     });
     if (nurLog) {
       // Ohne SMTP faellt nodemailer auf jsonTransport zurueck: Die Mail geht
@@ -289,6 +324,60 @@ export class MailService {
       text,
       html,
       `Interne Anfrage (${betreff}) an ${empfaenger}`,
+    );
+  }
+
+  /**
+   * Feedback aus der App an das Team.
+   *
+   * `devHinweis` nennt bewusst NICHT den Text: Ohne SMTP landet er in der
+   * Entwicklung im Log, und das Feedback kann Namen enthalten.
+   */
+  async sendeFeedback(empfaenger: string, d: FeedbackMailDaten): Promise<void> {
+    const herkunft = ohneSteuerzeichen(d.herkunft) || 'Unbekannte Organisation';
+    const betreff = d.demo
+      ? 'SozioLog – Feedback aus der Demo'
+      : `SozioLog – Feedback aus ${herkunft}`;
+    const rueckfragen = d.kontakt
+      ? `erlaubt – ${d.kontakt.name} <${d.kontakt.email}>`
+      : d.demo
+        ? 'nicht möglich (geteiltes Demo-Konto)'
+        : 'nicht gewünscht';
+
+    const angaben = [
+      `Von: ${herkunft}`,
+      ...(d.instanz ? [`Instanz: ${d.instanz}`] : []),
+      `Seite: ${ohneSteuerzeichen(d.seitenBezeichnung)} (${d.seite})`,
+      `Datum: ${tagDeutsch(d.datum)}`,
+      `App-Fassung: ${d.version}`,
+      `Rückfragen: ${rueckfragen}`,
+    ];
+    // Absätze des Feedbacks bleiben Absätze; im HTML wird jeder escaped.
+    const absaetze = d.text
+      .split(/\r?\n/)
+      .map((z) => z.trimEnd())
+      .filter((z) => z.length > 0);
+
+    const text =
+      `Neues Feedback zu SozioLog\n\n${angaben.join('\n')}\n\n` +
+      `Feedback:\n${d.text}\n`;
+    const html = baueHtml({
+      titel: 'Neues Feedback',
+      absaetze: [...angaben, 'Feedback:', ...absaetze],
+      hinweis: d.kontakt
+        ? 'Mit „Antworten" erreichst du die Person direkt.'
+        : undefined,
+    });
+    await this.versende(
+      empfaenger,
+      betreff,
+      text,
+      html,
+      `Feedback an ${empfaenger} (${ohneSteuerzeichen(d.seitenBezeichnung)})`,
+      undefined,
+      d.kontakt
+        ? { antwortAn: { name: d.kontakt.name, address: d.kontakt.email } }
+        : undefined,
     );
   }
 
