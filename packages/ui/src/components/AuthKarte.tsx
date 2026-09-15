@@ -27,7 +27,7 @@ export function AuthKarte({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-flaeche-2 flex items-center justify-center px-4">
+    <div className="min-h-[calc(100dvh_-_var(--demo-banner-hoehe,0px))] bg-flaeche-2 flex items-center justify-center px-4">
       <div className="bg-flaeche rounded-xl shadow-karte p-8 max-w-md w-full text-center">
         <h1 className="text-2xl font-bold text-primaer mb-1">{titel}</h1>
         {marke && (

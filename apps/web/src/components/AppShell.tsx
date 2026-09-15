@@ -331,8 +331,11 @@ export function AppShell() {
 
   if (!person) return null;
 
+  // Alle Höhen und Abstände ziehen den Demo-Streifen ab (`--demo-banner-hoehe`,
+  // gesetzt von DemoBanner; ohne Streifen 0). Unterstriche statt Leerzeichen:
+  // So bleibt der Variablenname in Tailwinds calc() unangetastet.
   return (
-    <div className="min-h-dvh bg-flaeche-2">
+    <div className="min-h-[calc(100dvh_-_var(--demo-banner-hoehe,0px))] bg-flaeche-2">
       <a
         href="#hauptinhalt"
         className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-primaer focus:px-3 focus:py-2 focus:text-primaer-text"
@@ -342,7 +345,7 @@ export function AppShell() {
 
       {/* Durchgehende Kopfleiste ganz oben: links Wortmarke (Serif) + Organisation,
           rechts Glocke + Abmelden. */}
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-rahmen bg-flaeche px-4">
+      <header className="sticky top-[var(--demo-banner-hoehe,0px)] z-30 flex h-16 items-center justify-between border-b border-rahmen bg-flaeche px-4">
         <div className="flex items-center gap-2">
           <button
             ref={menueKnopfRef}
@@ -373,7 +376,7 @@ export function AppShell() {
 
       {/* Unter dem Header: Sidebar (links) + Main (rechts, mit klarem Abstand). */}
       <div className="flex">
-        <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] w-[268px] shrink-0 flex-col border-r border-rahmen bg-flaeche lg:flex">
+        <aside className="sticky top-[calc(4rem_+_var(--demo-banner-hoehe,0px))] hidden h-[calc(100dvh_-_4rem_-_var(--demo-banner-hoehe,0px))] w-[268px] shrink-0 flex-col border-r border-rahmen bg-flaeche lg:flex">
           <div className="flex-1 overflow-y-auto p-4">
             <NavListeOben domaenen={domaenen} />
           </div>

@@ -53,7 +53,9 @@ export function AdminVerwaltungSeite() {
           role="tablist"
           aria-label="Verwaltungsbereiche"
           onKeyDown={beiTaste}
-          className="inline-flex shrink-0 gap-1 self-start rounded-lg border border-rahmen bg-flaeche-3 p-1"
+          // Auf schmalen Fenstern nie breiter als die Seite: lieber innerhalb
+          // der Leiste seitlich schieben als die ganze Seite verbreitern.
+          className="inline-flex max-w-full gap-1 self-start overflow-x-auto rounded-lg border border-rahmen bg-flaeche-3 p-1 md:shrink-0"
         >
           {TABS.map((t, i) => {
             const gewaehlt = i === aktiv;
@@ -69,7 +71,7 @@ export function AdminVerwaltungSeite() {
                 aria-controls={`${basisId}-panel-${i}`}
                 tabIndex={gewaehlt ? 0 : -1}
                 onClick={() => setAktiv(i)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
                   gewaehlt
                     ? 'bg-flaeche text-text shadow-karte'
                     : 'text-leise hover:text-text'
